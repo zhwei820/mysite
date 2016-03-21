@@ -1,0 +1,64 @@
+
+
+.date_time_input {
+  width: 150px!important;
+}
+
+.alert {
+  margin: auto;
+}
+
+.operate {
+    color: #333;
+    margin-right: 5px;
+}
+
+.remove {
+    color: #333!important;
+    margin-right: 5px!important;
+    margin-left: 0px!important;
+}
+
+.table > thead > tr > td.table_normal,
+.table > tbody > tr > td.table_normal,
+.table > tfoot > tr > td.table_normal,
+.table > thead > tr > th.table_normal,
+.table > tbody > tr > th.table_normal,
+.table > tfoot > tr > th.table_normal,
+.table > thead > tr.table_normal > td,
+.table > tbody > tr.table_normal > td,
+.table > tfoot > tr.table_normal > td,
+.table > thead > tr.table_normal > th,
+.table > tbody > tr.table_normal > th,
+.table > tfoot > tr.table_normal > th {
+  background-color: #46C459;
+}
+.table-hover > tbody > tr > td.table_normal:hover,
+.table-hover > tbody > tr > th.table_normal:hover,
+.table-hover > tbody > tr.table_normal:hover > td,
+.table-hover > tbody > tr:hover > .table_normal,
+.table-hover > tbody > tr.table_normal:hover > th {
+  background-color: #3CC350;
+}
+
+
+
+.green,.green a
+{
+	color:#3CC350;
+}
+
+.blue,.blue a
+{
+	color:#377abe;
+}
+
+.red,.red a
+{
+	color:#F24830;
+}
+
+.green,.green a
+{
+	color:#2ED82B;
+}
