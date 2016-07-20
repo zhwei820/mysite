@@ -63,7 +63,7 @@ def user_login(request):
             else:
                 return JsonResponse({"status": 0, "message": "用户名或密码错误"})
         except Exception as e:
-            print traceback.format_exc()
+            print(traceback.format_exc())
             return JsonResponse(RESULT_404)
 
 @login_required
@@ -107,7 +107,7 @@ def add_user(request):
             return JsonResponse(result)
         except Exception as e:
             logger_error.error(e)
-            print traceback.format_exc()
+            print(traceback.format_exc())
             return JsonResponse(RESULT_404)
     else:
         return render(request, 'signup.html', {'role_option' : [{'name': '平台', 'role':'1'}, {'name': '商家', 'role': '2'}]})

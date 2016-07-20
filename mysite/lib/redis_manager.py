@@ -18,7 +18,6 @@ if len(options.REDISES) > 1:
                                                  db = options.REDISES[key]['redis_db'])
 
 class m_redis(object):
-
     @staticmethod
     def reconn():
         _REDIS = redis.Redis(host=options.redis_host,

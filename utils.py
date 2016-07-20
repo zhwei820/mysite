@@ -61,7 +61,7 @@ def cut_long_data(table_data):  # for display in table
 
         return table_data
     except Exception as e:
-        print traceback.format_exc()
+        print(traceback.format_exc())
         return ''
 
 def prepare_table_data(table_data, option):  # prepare table data
@@ -75,7 +75,7 @@ def prepare_table_data(table_data, option):  # prepare table data
                         table_data[jj][key] = option[key].get(str(table_data[jj][key]), table_data[jj][key])
         return cut_long_data(table_data)
     except Exception as e:
-        print traceback.format_exc()
+        print(traceback.format_exc())
 
         return ''
 

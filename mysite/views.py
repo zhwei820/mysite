@@ -64,9 +64,9 @@ def channel_set(request, param):
 
     if request.method == "GET":
         query_str = get_filter()
-        print query_str
+        print(query_str)
         sql = "SELECT * FROM a_channel_set WHERE 1 AND status = 1 %s" % (query_str)
-        print sql
+        print(sql)
         m = mmysql_rw()
         m.Q(sql)
         res = m.fetch_all()
@@ -79,7 +79,7 @@ def channel_set(request, param):
         try:
             (channel, parent_id, weight, operator, remark, channel_type, is_public) = get_post_parameter()
         except Exception as e:
-            print traceback.format_exc()
+            print(traceback.format_exc())
             return JsonResponse({"status": 1, "message":"参数错误"})
         sql = "INSERT INTO a_channel_set (channel, parent_id, weight, operator, remark, channel_type, status, is_public) \
         VALUES('%s', '%s', '%s', '%s', '%s', '%s', 1, '%s')" % (channel, parent_id, weight, operator, remark, channel_type, is_public)
@@ -94,7 +94,7 @@ def channel_set(request, param):
         try:
             (channel, parent_id, weight, operator, remark, channel_type, is_public) = get_post_parameter()
         except Exception as e:
-            print traceback.format_exc()
+            print(traceback.format_exc())
             return JsonResponse({"status": 1, "message":"参数错误"})
         sql = "UPDATE a_channel_set SET channel = '%s', parent_id = '%s', weight = '%s', operator = '%s', remark = '%s', channel_type = '%s', is_public = '%s' WHERE id = %s;" \
         % (channel, parent_id, weight, operator, remark, channel_type, is_public, id)

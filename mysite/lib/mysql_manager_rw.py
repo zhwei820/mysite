@@ -68,31 +68,6 @@ class mmysql_rw:
     def Q(self, sql, args=None):
         return self._query(sql, args)
 
-
-    def worker(self, sql_list=None, callback=None):
-        rs = False
-        if not sql_list:
-            return rs
-
-        self.db.autocommit(False)
-        try:
-            for sql in sql_list:
-                self.Q(sql)
-
-            self.db.commit()
-            # 放个钩子
-            if callback:
-                callback()
-
-            rs = True
-        except:
-            error("worker error: ", exc_info=True)
-            self.db.rollback()
-            rs = False
-        finally:
-            self.db.autocommit(True)
-        return rs
-
     # 事物需要TQ支持 而不是Q
     def TQ(self, sql, args=None):
         try:
@@ -104,7 +79,6 @@ class mmysql_rw:
             raise e
 
     def _query(self, sql, args=None):
-
         try:
             self.get_conn()
             with warnings.catch_warnings(record=True) as w:

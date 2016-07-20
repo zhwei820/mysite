@@ -26,7 +26,7 @@ class Extra(models.Model):
             permission = json.loads(self.permission_str)['menu']
             return permission
         except:
-            print traceback.format_exc()
+            print(traceback.format_exc())
             return {}
 
     def get_extra_permission(self):
@@ -34,7 +34,7 @@ class Extra(models.Model):
             permission = json.loads(self.permission_str)['extra']
             return permission
         except:
-            print traceback.format_exc()
+            print(traceback.format_exc())
             return {}
 
 

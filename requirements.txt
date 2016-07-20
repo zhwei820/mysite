@@ -3,7 +3,6 @@ dj-database-url
 dj-static
 gunicorn
 Unipath
-Pillow
 python-decouple
-MySQL-python
+mysqlclient
 DjangoCaptcha
