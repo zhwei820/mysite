@@ -14,14 +14,11 @@ mysql连接管理类
 import MySQLdb
 import _mysql_exceptions
 import warnings
-from cStringIO import StringIO
 import traceback
 import MySQLdb.cursors
 from django.conf import settings as _options
 
-
 class mmysql_rw:
-
     default_charset = "utf8"
 
     def __init__(self, db_name=""):
