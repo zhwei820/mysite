@@ -40,7 +40,7 @@ def channel_set(request, param):
                 res[key] = mmysql_rw.F(data.get(key, ''))
             res['operator'] = request.user.username
             return tuple([res[key] for key in keys])
-        except Exception, e:
+        except Exception as e:
             raise e
     def get_filter():
         try:

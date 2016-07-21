@@ -13,6 +13,8 @@ Including another URLconf
     1. Add an import:  from blog import urls as blog_urls
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
+# coding=utf-8
+
 from django.conf.urls import include, url, patterns
 from django.contrib import admin
 from django.conf.urls.static import static
@@ -20,9 +22,10 @@ from django.conf import settings
 from a_user import urls as users_urls
 from mysite import views
 import sys
+import imp
 
-reload(sys)
-sys.setdefaultencoding( "utf-8" )
+imp.reload(sys)
+# sys.setdefaultencoding( "utf-8" )
 
 urlpatterns = patterns('',
 
