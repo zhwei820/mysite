@@ -20,7 +20,7 @@ from DjangoCaptcha import Captcha
 from mydecorators import login_required
 from config.global_conf import USER_TYPE, RESULT_404, NO_PERMISSION
 from config import global_conf
-from .models import channel_set
+from .models.Channel_set import Channel_set
 
 from mysite.lib.mysql_manager_rw import mmysql_rw
 
@@ -35,19 +35,8 @@ def  home(request):
 
 
 
-
-@app.route('/', methods=['GET'])
-def index():
-    query = channelSetModel.orderby(
-        Message.create_at, desc=True).select()  # sort by created time
-    results = query.execute()
-    messages = results.all()
-    return render_template('template.html', messages=messages)
-
-
-
 @login_required
-def channel_set(request, param):
+def channel_set_view(request, param):
     def get_post_parameter():
         try:
             keys = ['channel', 'parent_id', 'weight', 'operator', 'remark', 'channel_type', 'is_public']
@@ -80,6 +69,15 @@ def channel_set(request, param):
             raise
 
     if request.method == "GET":
+
+        query = Channel_set.orderby(
+            Channel_set.channel, desc=True).select()  # sort by created time
+        results = query.execute()
+        messages = results.all()
+        print(messages)
+        return JsonResponse(messages, safe = False)
+
+
         query_str = get_filter()
         print(query_str)
         sql = "SELECT * FROM a_channel_set WHERE 1 AND status = 1 %s" % (query_str)

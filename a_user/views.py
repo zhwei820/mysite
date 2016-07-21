@@ -77,8 +77,6 @@ def user_logout(request):
         except Exception as e:
             return JsonResponse(RESULT_404)
 
-
-
 # @login_required
 def add_user(request):
     # 添加用户

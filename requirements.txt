@@ -5,4 +5,4 @@ gunicorn
 Unipath
 python-decouple
 mysqlclient
-DjangoCaptcha
+skylark
