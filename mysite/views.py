@@ -7,6 +7,11 @@ Created on 2015-06-09
 @author: zw
 '''
 
+import utils
+import json
+import logging
+import random
+import traceback
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
@@ -15,12 +20,8 @@ from DjangoCaptcha import Captcha
 from mydecorators import login_required
 from config.global_conf import USER_TYPE, RESULT_404, NO_PERMISSION
 from config import global_conf
+from .models import channel_set
 
-import utils
-import json
-import logging
-import random
-import traceback
 from mysite.lib.mysql_manager_rw import mmysql_rw
 
 
@@ -31,6 +32,19 @@ def channel(request):
 @login_required
 def  home(request):
     return render(request, 'dashboard.html')
+
+
+
+
+@app.route('/', methods=['GET'])
+def index():
+    query = channelSetModel.orderby(
+        Message.create_at, desc=True).select()  # sort by created time
+    results = query.execute()
+    messages = results.all()
+    return render_template('template.html', messages=messages)
+
+
 
 @login_required
 def channel_set(request, param):

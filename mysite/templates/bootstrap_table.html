@@ -87,7 +87,7 @@
   <div class="form-group">
     <select class="form-control" name="status">
       <option value="last_login">请选择状态</option>
-      {% for k, v in pay_status.iteritems %}
+      {% for k, v in pay_status.items %}
         <option value="{{ k }}">{{ v }}</option>
       {% endfor %}
     </select>
