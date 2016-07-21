@@ -25,9 +25,12 @@ from mysite.lib.mysql_manager_rw import mmysql_rw
 
 
 @login_required
-def home(request):
+def channel(request):
     return render(request, 'bootstrap_table.html', {'users': {}, 'pay_status': global_conf.pay_status})
 
+@login_required
+def  home(request):
+    return render(request, 'dashboard.html')
 
 @login_required
 def channel_set(request, param):

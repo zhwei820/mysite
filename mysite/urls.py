@@ -33,6 +33,5 @@ urlpatterns = patterns('',
     url(r'^user/', include(users_urls)),
     url(r'^home/', views.home, name='home'),
     url(r'^channel_set/(\d+)?$', views.channel_set, name='channel_set'),
-
-
+    
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
