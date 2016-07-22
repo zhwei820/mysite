@@ -20,7 +20,7 @@ from DjangoCaptcha import Captcha
 from mydecorators import login_required
 from config.global_conf import USER_TYPE, RESULT_404, NO_PERMISSION
 from config import global_conf
-from .models.Channel_set import Channel_set
+from .models.Channelset import a_channel_set
 
 from mysite.lib.mysql_manager_rw import mmysql_rw
 
@@ -33,10 +33,8 @@ def channel(request):
 def  home(request):
     return render(request, 'dashboard.html')
 
-
-
 @login_required
-def channel_set_view(request, param):
+def channel_set(request, param):
     def get_post_parameter():
         try:
             keys = ['channel', 'parent_id', 'weight', 'operator', 'remark', 'channel_type', 'is_public']
@@ -48,43 +46,19 @@ def channel_set_view(request, param):
             return tuple([res[key] for key in keys])
         except Exception as e:
             raise e
-    def get_filter():
-        try:
-            time_type = mmysql_rw.F(request.GET.get('time_type', ''))
-            start_time = mmysql_rw.F(request.GET.get('start_time', ''))
-            end_time = mmysql_rw.F(request.GET.get('end_time', ''))
-            keyword_type = mmysql_rw.F(request.GET.get('keyword_type', ''))
-            keyword = mmysql_rw.F(request.GET.get('keyword', ''))
-            is_public = mmysql_rw.F(request.GET.get('is_public', ''))
 
-            query_str = ''
-            if time_type and start_time and end_time:
-                query_str += "AND %s > '%s' AND %s < '%s'" % (time_type, start_time, time_type, end_time)
-            if keyword_type and keyword:
-                query_str += "AND %s Like '%%" % (keyword_type) +  "%s%%'" %(keyword)
-            if is_public:
-                query_str += "AND is_public = " % (is_public)
-            return query_str
+    if request.method == "GET":
+        query_filter = {}
+        try:
+            query_filter['channel'] = mmysql_rw.F(request.GET.get('channel', ''))
+            query_filter['start_time'] = mmysql_rw.F(request.GET.get('start_time', ''))
+            query_filter['end_time'] = mmysql_rw.F(request.GET.get('end_time', ''))
         except Exception as e:
             raise
 
-    if request.method == "GET":
+        res = a_channel_set.get_list(query_filter)
+        return JsonResponse(res, safe = False)
 
-        query = Channel_set.orderby(
-            Channel_set.channel, desc=True).select()  # sort by created time
-        results = query.execute()
-        messages = results.all()
-        print(messages)
-        return JsonResponse(messages, safe = False)
-
-
-        query_str = get_filter()
-        print(query_str)
-        sql = "SELECT * FROM a_channel_set WHERE 1 AND status = 1 %s" % (query_str)
-        print(sql)
-        m = mmysql_rw()
-        m.Q(sql)
-        res = m.fetch_all()
         option = {'is_public': global_conf.is_public,
         }
         res_1 = utils.prepare_table_data(res, option)
