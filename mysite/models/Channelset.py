@@ -19,15 +19,12 @@ class a_channel_set(Model):
     is_public = Field()
 
     @staticmethod
-    def get_list(query_filter, start=1, end=1000):
+    def get_list(query_filter, start=0, end=1000):
         _self = a_channel_set
         if(query_filter.get('channel', '') != ''):
-            _self = _self.where(channel=str(query_filter['channel']))
+            _self = _self.where(channel=query_filter['channel'])
         if(query_filter.get('start_time', '') != '' and query_filter.get('end_time', '') != '' ):
-            query_filter['start_time'].relpace(' ', 'T')
-            query_filter['end_time'].relpace(' ', 'T')
             _self = _self.where(_self.ctime.between(query_filter['start_time'], query_filter['end_time']))
-
         _limit = end - start
         query = _self.orderby(_self.id, desc=True).limit(_limit, offset=start).select()
         results = query.execute().all()
