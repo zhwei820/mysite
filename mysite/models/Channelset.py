@@ -30,5 +30,4 @@ class a_channel_set(Model):
         _limit = end - start
         query = _self.orderby(_self.id, desc=True).limit(_limit, offset=start).select()
         results = query.execute().all()
-
         return results

@@ -1,0 +1,234 @@
+{% extends 'base.html' %} {% load staticfiles %} {% load i18n %} {% block title %}表格{% endblock %} {% block head %}
+
+<script src="{% static 'bootstrap-datetimepicker/js/moment.js' %}"></script>
+
+<link rel="stylesheet" href="{% static 'bootstrap-table/bootstrap-table.min.css' %}">
+<script src="{% static 'bootstrap-table/bootstrap-table.min.js' %}"></script>
+
+<link rel="stylesheet" href="{% static 'bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css' %}">
+<script src="{% static 'bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}"></script>
+<script src="{% static 'bootstrap/js/bootstrap-validator.js' %}"></script>
+
+<style>
+  .update {
+    color: #333;
+    margin-right: 5px;
+  }
+
+  .remove {
+    color: red;
+    margin-left: 5px;
+  }
+
+  .alert {
+    padding: 0 14px;
+    margin-bottom: 0;
+    display: inline-block;
+  }
+</style>
+
+{% endblock head %} {% block main %}
+<p class="bg-success alert">...</p>
+
+<div class="form-inline">
+
+  <button type="button" class="btn btn-primary create">
+    添加
+  </button>
+
+  <div class="form-group">
+
+  <div class="form-group">
+    <input type='text' class="form-control date_time_input" name="email" />
+  </div>
+
+</div>
+
+
+<table id="table" data-show-refresh="true" data-toolbar=".form-inline" data-sort-name="id" data-sort-order="desc" data-row-style="rowStyle" data-pagination="true" data-page-size="10" data-page-list="[10,20]" data-pagination-first-text="First" data-pagination-pre-text="Previous"
+  data-pagination-next-text="Next" data-pagination-last-text="Last" data-query-params="queryParams">
+  <thead>
+    <tr>
+      <th data-field="action" data-align="center" data-formatter="actionFormatter" data-events="actionEvents">操作</th>
+      <th data-sortable="true" data-field="id" width="100">id</th>
+      <th data-sortable="true" data-field="channel" width="100">email</th>
+      <th data-sortable="true" data-field="parent_id">父渠道</th>
+      <th data-sortable="true" data-field="weight">权重</th>
+      <th data-sortable="true" data-field="is_public">是否公开</th>
+      <th data-sortable="true" data-field="remark">备注</th>
+      <th data-sortable="true" data-field="channel_type">渠道类型</th>
+      <th data-sortable="true" data-field="operator">操作人</th>
+      <th data-sortable="true" data-field="ctime">添加时间</th>
+      <th data-sortable="true" data-field="utime">更新时间</th>
+
+    </tr>
+  </thead>
+</table>
+</div>
+
+<div id="modal" class="modal fade" data-toggle="validator" role="form">
+  <div class="modal-dialog">
+    <form class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"></h4>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>渠道号</label>
+          <input type="text" class="form-control" name="channel" placeholder="channel" required pattern="^1\d{10}$">
+        </div>
+        <div class="form-group">
+          <label>父渠道id</label>
+          <input type="number" class="form-control" name="parent_id" placeholder="parent_id" required>
+        </div>
+        <div class="form-group">
+          <label>权重 <span class="small">0~1000</span></label>
+          <input type="number" class="form-control" name="weight" placeholder="weight" required>
+        </div>
+
+        <label>是否公开 </label>
+        <div class="form-group">
+          <label class="radio-inline">
+            <input type="radio" name="is_public" value="1" title="公开" required>公开
+          </label>
+          <label class="radio-inline">
+            <input type="radio" name="is_public" value="0" title="私有" required>私有
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label>备注</label>
+          <input type="text" class="form-control" name="remark" placeholder="remark" required>
+        </div>
+
+        <div class="form-group">
+          <label>渠道类型</label>
+          <select class="form-control" name="channel_type" required>
+            <option value="cpa" title="cpa">cpa</option>
+            <option value="cps" title="cps">cps</option>
+          </select>
+        </div>
+        <div class="help-block with-errors"></div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary submit" >Submit</button>
+      </div>
+    </form>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+
+<div id="detail_modal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"></h4>
+        <div class="modal-body">
+          <div class="panel panel-default">
+            <div class="panel-heading">Panel heading without title</div>
+            <div class="panel-body">
+              Panel content
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Panel title</h3>
+            </div>
+            <div class="panel-body">
+              Panel content
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+
+
+
+<script>
+  var API_URL = 'http://' + location.host + '/channel_set/';
+
+  function queryParams(params) {
+    var query_data = {};
+    var filter = $('.form-inline');
+    filter.find(".form-control[name]").each(function() {
+      query_data[$(this).attr('name')] = $(this).val();
+    })
+    return query_data;
+  }
+
+  function actionFormatter(value) {
+    return [
+      '<button class="update btn btn-default" href="javascript:" title="Update Item">编辑</button>',
+      '<button class="remove btn btn-default" href="javascript:" title="Delete Item">删除</button>',
+      '<button class="operate btn btn-default" href="javascript:" title="查看详情">详情</button>',
+    ].join('');
+  }
+
+  // update and delete events
+  window.actionEvents = {
+    'click .update': function(e, value, row) {
+      showModal($(this).attr('title'), row);
+    },
+    'click .remove': function(e, value, row) {
+      if (confirm('Are you sure to delete this item?')) {
+        $.ajax({
+          url: API_URL + row.id,
+          type: 'delete',
+          success: function() {
+            $table.bootstrapTable('refresh');
+            showAlert('Delete item successful!', 'success');
+          },
+          error: function() {
+            showAlert('Delete item error!', 'danger');
+          }
+        })
+      }
+    },
+    'click .operate': function(e, value, row) {
+      $detail_modal = $("#detail_modal")
+      $detail_modal.modal('show');
+
+    }
+  };
+
+
+  function showAlert(title, type) {
+    $alert.attr('class', 'alert alert-' + type || 'success')
+      .html('<i class="glyphicon glyphicon-check"></i> ' + title).show();
+    setTimeout(function() {
+      $alert.hide();
+    }, 3000);
+  }
+
+  function rowStyle(row, index) {
+    var classes = ['active', 'success', 'info', 'warning', 'danger', 'table_normal'];
+
+    if (row['ctime'] > '2016') {
+      return {
+        classes: classes[2]
+      };
+    }
+    return {
+      classes: classes[5]
+    };
+  }
+
+$.ready(function(){
+    $table.bootstrapTable('refresh');
+  })
+</script>
+
+<script src="{% static 'js/table_common.js' %}"></script>
+
+{% endblock main %}
