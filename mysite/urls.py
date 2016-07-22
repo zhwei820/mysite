@@ -27,7 +27,7 @@ import imp
 imp.reload(sys)
 
 urlpatterns = patterns('',
-    # url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
     url(r'^user/', include(users_urls)),
     url(r'^home/', views.home, name='home'),
     url(r'^channel/', views.channel, name='channel'),

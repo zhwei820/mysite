@@ -51,15 +51,13 @@
     <tr>
       <th data-field="action" data-align="center" data-formatter="actionFormatter" data-events="actionEvents">操作</th>
       <th data-sortable="true" data-field="id" width="100">id</th>
-      <th data-sortable="true" data-field="channel" width="100">email</th>
-      <th data-sortable="true" data-field="parent_id">父渠道</th>
-      <th data-sortable="true" data-field="weight">权重</th>
-      <th data-sortable="true" data-field="is_public">是否公开</th>
-      <th data-sortable="true" data-field="remark">备注</th>
-      <th data-sortable="true" data-field="channel_type">渠道类型</th>
-      <th data-sortable="true" data-field="operator">操作人</th>
-      <th data-sortable="true" data-field="ctime">添加时间</th>
-      <th data-sortable="true" data-field="utime">更新时间</th>
+      <th data-sortable="true" data-field="email" width="100">邮箱</th>
+      <th data-sortable="true" data-field="username">用户名</th>
+      <th data-sortable="true" data-field="is_superuser">超级管理员</th>
+      <th data-sortable="true" data-field="is_staff">管理员</th>
+      <th data-sortable="true" data-field="is_active">状态</th>
+      <th data-sortable="true" data-field="date_joined">创建时间</th>
+      <th data-sortable="true" data-field="last_login">最后登录时间</th>
 
     </tr>
   </thead>
@@ -76,15 +74,15 @@
 
       <div class="modal-body">
         <div class="form-group">
-          <label>渠道号</label>
-          <input type="text" class="form-control" name="channel" placeholder="channel" required pattern="^1\d{10}$">
+          <label>用户名</label>
+          <input type="text" class="form-control" name="username" placeholder="username" required >
         </div>
         <div class="form-group">
-          <label>父渠道id</label>
-          <input type="number" class="form-control" name="parent_id" placeholder="parent_id" required>
+          <label>邮箱</label>
+          <input type="number" class="form-control" name="email" placeholder="email" required>
         </div>
         <div class="form-group">
-          <label>权重 <span class="small">0~1000</span></label>
+          <label>密码</label>
           <input type="number" class="form-control" name="weight" placeholder="weight" required>
         </div>
 
