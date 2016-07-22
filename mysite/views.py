@@ -41,7 +41,7 @@ def channel_set(request, param):
             data =  json.loads(request.body)
             res = {}
             for key in keys:
-                res[key] = mmysql_rw.F(data.get(key, ''))
+                res[key] = data.get(key, '')
             res['operator'] = request.user.username
             return tuple([res[key] for key in keys])
         except Exception as e:
@@ -50,9 +50,9 @@ def channel_set(request, param):
     if request.method == "GET":
         query_filter = {}
         try:
-            query_filter['channel'] = mmysql_rw.F(request.GET.get('channel', ''))
-            query_filter['start_time'] = mmysql_rw.F(request.GET.get('start_time', ''))
-            query_filter['end_time'] = mmysql_rw.F(request.GET.get('end_time', ''))
+            query_filter['channel'] = request.GET.get('channel', '')
+            query_filter['start_time'] = request.GET.get('start_time', '')
+            query_filter['end_time'] = request.GET.get('end_time', '')
         except Exception as e:
             raise
 
