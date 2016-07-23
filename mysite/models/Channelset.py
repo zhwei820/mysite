@@ -11,7 +11,7 @@ class A_channel_set(Model):
     parent_id = Field()
     weight = Field()
     status = Field()
-    operator = Field()
+    admin = Field()
     utime = Field()
     ctime = Field()
     remark = Field()
@@ -25,6 +25,7 @@ class A_channel_set(Model):
             _self = _self.where(channel=query_filter['channel'])
         if(query_filter.get('start_time', '') != '' and query_filter.get('end_time', '') != '' ):
             _self = _self.where(_self.ctime.between(query_filter['start_time'], query_filter['end_time']))
+        _self = _self.where(status=1)
         _limit = end - start
         query = _self.orderby(_self.id, desc=True).limit(_limit, offset=start).select()
         results = query.execute().all()
