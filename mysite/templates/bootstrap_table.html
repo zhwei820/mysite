@@ -75,23 +75,19 @@
     });
   </script>
 
-  <select class="form-control" name="keyword_type">
-    <option value="channel">渠道名</option>
-    <option value="remark">备注</option>
-  </select>
-
   <div class="form-group">
-    <input type='text' class="form-control date_time_input" name="keyword" />
+    <label for="">渠道号</label>
+    <input type='text' class="form-control date_time_input" name="channel" />
   </div>
 
-  <div class="form-group">
+  <!-- <div class="form-group">
     <select class="form-control" name="status">
       <option value="last_login">请选择状态</option>
       {% for k, v in pay_status.items %}
         <option value="{{ k }}">{{ v }}</option>
       {% endfor %}
     </select>
-  </div>
+  </div> -->
 
 </div>
 

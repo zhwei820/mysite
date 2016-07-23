@@ -22,6 +22,7 @@ class A_channel_set(Model):
     def get_list(query_filter, start=0, end=1000):
         _self = A_channel_set
         if(query_filter.get('channel', '') != ''):
+            print(query_filter.get('channel', ''))
             _self = _self.where(channel=query_filter['channel'])
         if(query_filter.get('start_time', '') != '' and query_filter.get('end_time', '') != '' ):
             _self = _self.where(_self.ctime.between(query_filter['start_time'], query_filter['end_time']))

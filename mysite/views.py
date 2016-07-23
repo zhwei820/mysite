@@ -22,7 +22,7 @@ from mydecorators import login_required
 from mysite.lib.mysql_manager_rw import mmysql_rw
 from config.global_conf import USER_TYPE, RESULT_404, NO_PERMISSION
 from config import global_conf
-from .models.Channelset import A_channel_set
+from .model.Channelset import A_channel_set
 
 
 from django.views.decorators.csrf import csrf_exempt
@@ -46,7 +46,6 @@ def channel_set(request, param):
             query_filter['end_time'] = request.GET.get('end_time', '')
         except Exception as e:
             raise
-
         res = A_channel_set.get_list(query_filter)
         option = {'is_public': global_conf.is_public,
         }

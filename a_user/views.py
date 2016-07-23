@@ -12,15 +12,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from mydecorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User, Group
-
 from config.global_conf import USER_TYPE, RESULT_404, NO_PERMISSION
 from DjangoCaptcha import Captcha
-
 import utils
 import logging
 import random
 import traceback
 from mysite.lib.mysql_manager_rw import mmysql_rw
+from .model.UserExtra import UserExtra
 
 
 logger = logging.getLogger('mall_admin')
@@ -96,12 +95,11 @@ def add_user(request):
 
             user = User.objects.create_user(username=username, email=email, password=password)
             user.save()
-            def save_user_role(uid, role):
-                sql = "UPDATE a_user_extra SET role = %s WHERE user_id = %s; " % (role, uid)
-                m = mmysql_rw()
-                m.Q(sql)
 
-            save_user_role(user.id, role)
+            user_extra = UserExtra.at(user.id).getone()
+            user_extra.role = role
+            user_extra.save()
+
             return JsonResponse(result)
         except Exception as e:
             logger_error.error(e)
@@ -193,3 +191,7 @@ def update_user(request):
         except Exception as e:
             logger_error.error(e)
             return JsonResponse(RESULT_404)
+
+@login_required
+def user_extra(request):
+    pass
