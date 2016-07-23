@@ -20,10 +20,11 @@ from DjangoCaptcha import Captcha
 from mydecorators import login_required
 from config.global_conf import USER_TYPE, RESULT_404, NO_PERMISSION
 from config import global_conf
-from .models.Channelset import a_channel_set
+from .models.Channelset import A_channel_set
 
 from mysite.lib.mysql_manager_rw import mmysql_rw
 
+from django.views.decorators.csrf import csrf_exempt
 
 @login_required
 def channel(request):
@@ -33,20 +34,9 @@ def channel(request):
 def  home(request):
     return render(request, 'dashboard.html')
 
-@login_required
+# @login_required
+@csrf_exempt
 def channel_set(request, param):
-    def get_post_parameter():
-        try:
-            keys = ['channel', 'parent_id', 'weight', 'operator', 'remark', 'channel_type', 'is_public']
-            data =  json.loads(request.body)
-            res = {}
-            for key in keys:
-                res[key] = data.get(key, '')
-            res['operator'] = request.user.username
-            return tuple([res[key] for key in keys])
-        except Exception as e:
-            raise e
-
     if request.method == "GET":
         query_filter = {}
         try:
@@ -56,9 +46,7 @@ def channel_set(request, param):
         except Exception as e:
             raise
 
-        res = a_channel_set.get_list(query_filter)
-        return JsonResponse(res, safe = False)
-
+        res = A_channel_set.get_list(query_filter)
         option = {'is_public': global_conf.is_public,
         }
         res_1 = utils.prepare_table_data(res, option)
@@ -66,22 +54,24 @@ def channel_set(request, param):
 
     elif request.method == "POST":
         try:
-            (channel, parent_id, weight, operator, remark, channel_type, is_public) = get_post_parameter()
+            keys = ['channel', 'parent_id', 'weight', 'remark', 'channel_type', 'is_public']
+            par = utils.get_post_parameter(request, keys)
         except Exception as e:
             print(traceback.format_exc())
             return JsonResponse({"status": 1, "message":"参数错误"})
-        sql = "INSERT INTO a_channel_set (channel, parent_id, weight, operator, remark, channel_type, status, is_public) \
-        VALUES('%s', '%s', '%s', '%s', '%s', '%s', 1, '%s')" % (channel, parent_id, weight, operator, remark, channel_type, is_public)
-        m = mmysql_rw()
+        a_channel_set = A_channel_set()
+        a_channel_set = utils.model_set(a_channel_set, par)
+
         try:
-            m.Q(sql)
+            a_channel_set.save()
         except Exception as e:
             return JsonResponse({"status": 1, "message":"渠道名相同"})
         return JsonResponse({"status": 0, "message":"添加成功"})
     elif request.method == "PUT":
         id = int(param)
         try:
-            (channel, parent_id, weight, operator, remark, channel_type, is_public) = get_post_parameter()
+            keys = ['channel', 'parent_id', 'weight', 'operator', 'remark', 'channel_type', 'is_public']
+            (channel, parent_id, weight, operator, remark, channel_type, is_public) = get_post_parameter(keys)
         except Exception as e:
             print(traceback.format_exc())
             return JsonResponse({"status": 1, "message":"参数错误"})

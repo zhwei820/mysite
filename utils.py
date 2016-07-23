@@ -46,12 +46,12 @@ def cut_long_data(table_data):  # for display in table
     try:
         unit_len = 20
         for jj in range(0, len(table_data)):
-            for key, value in table_data[jj].iteritems():
-                if isinstance(value, str) or isinstance(value, unicode):
+            for key, value in table_data[jj].items():
+                if isinstance(value, str):
                     tmp_str = ''
                     unit_num = len(value) / unit_len
                     ii = -1
-                    for ii in range(0, unit_num):
+                    for ii in range(0, int(unit_num)):
                         tmp_str += value[ii * unit_len : (ii + 1) * unit_len] + "\n"
                     ii += 1
                     tmp_str += value[ii * unit_len : ]
@@ -68,8 +68,8 @@ def prepare_table_data(table_data, option):  # prepare table data
     try:
         table_data_c = copy.deepcopy(table_data)
         for jj in range(0, len(table_data_c)):
-            for key, value in table_data_c[jj].iteritems():
-                for v, k in option.iteritems():
+            for key, value in table_data_c[jj].items():
+                for v, k in option.items():
                     if key == v:
                         table_data[jj][key + '_c'] = table_data[jj][key]
                         table_data[jj][key] = option[key].get(str(table_data[jj][key]), table_data[jj][key])
@@ -78,6 +78,24 @@ def prepare_table_data(table_data, option):  # prepare table data
         print(traceback.format_exc())
 
         return ''
+
+def get_post_parameter(request, keys):
+    try:
+        data =  json.loads(str(request.body.decode('utf8')))
+        res = {}
+        for key in keys:
+            res[key] = data.get(key, '')
+        return res
+    except Exception as e:
+        raise e
+
+def model_set(model, par):
+    try:
+        for key, item in par.items():
+            setattr(model, key, item)
+        return model
+    except Exception as e:
+        raise
 
 if __name__ == '__main__':
     data = [
