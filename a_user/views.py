@@ -193,5 +193,8 @@ def update_user(request):
             return JsonResponse(RESULT_404)
 
 @login_required
-def user_extra(request):
-    pass
+def user_extra(request, id):
+    id = int(id)
+    if request.method == 'GET':
+        user_extra = UserExtra.where(user_id=id).findone()
+        return JsonResponse(user_extra['permission_str'] if user_extra and user_extra['permission_str'] else {})
