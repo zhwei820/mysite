@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% load staticfiles %} {% load i18n %} {% block title %}表格{% endblock %} {% block head %}
+{% extends 'base.html' %} {% load staticfiles %} {% load i18n %} {% block title %}管理员管理{% endblock %} {% block head %}
 
 <script src="{% static 'bootstrap-datetimepicker/js/moment.js' %}"></script>
 
@@ -31,17 +31,10 @@
 <p class="bg-success alert">...</p>
 
 <div class="form-inline">
-
-  <button type="button" class="btn btn-primary create">
-    添加
-  </button>
-
   <div class="form-group">
-
-  <div class="form-group">
+    <label for="">email</label>
     <input type='text' class="form-control date_time_input" name="email" />
   </div>
-
 </div>
 
 
@@ -53,18 +46,17 @@
       <th data-sortable="true" data-field="id" width="100">id</th>
       <th data-sortable="true" data-field="email" width="100">邮箱</th>
       <th data-sortable="true" data-field="username">用户名</th>
-      <th data-sortable="true" data-field="is_superuser">超级管理员</th>
-      <th data-sortable="true" data-field="is_staff">管理员</th>
-      <th data-sortable="true" data-field="is_active">状态</th>
+      <th data-sortable="true" data-field="_is_superuser">超级管理员</th>
+      <th data-sortable="true" data-field="_is_active">状态</th>
+      <th data-sortable="true" data-field="_role">部门</th>
       <th data-sortable="true" data-field="date_joined">创建时间</th>
       <th data-sortable="true" data-field="last_login">最后登录时间</th>
 
     </tr>
   </thead>
 </table>
-</div>
 
-<div id="modal" class="modal fade" data-toggle="validator" role="form">
+<div id="modal_permission" class="modal fade" data-toggle="validator" role="form">
   <div class="modal-dialog">
     <form class="modal-content">
       <div class="modal-header">
@@ -73,41 +65,30 @@
       </div>
 
       <div class="modal-body">
-        <div class="form-group">
-          <label>用户名</label>
-          <input type="text" class="form-control" name="username" placeholder="username" required >
-        </div>
-        <div class="form-group">
-          <label>邮箱</label>
-          <input type="number" class="form-control" name="email" placeholder="email" required>
-        </div>
-        <div class="form-group">
-          <label>密码</label>
-          <input type="number" class="form-control" name="weight" placeholder="weight" required>
-        </div>
-
-        <label>是否公开 </label>
-        <div class="form-group">
-          <label class="radio-inline">
-            <input type="radio" name="is_public" value="1" title="公开" required>公开
-          </label>
-          <label class="radio-inline">
-            <input type="radio" name="is_public" value="0" title="私有" required>私有
-          </label>
-        </div>
-
-        <div class="form-group">
-          <label>备注</label>
-          <input type="text" class="form-control" name="remark" placeholder="remark" required>
+        <div class="permission">
+          <div class="form-group">
+            <label>用户名</label>
+            <label class="checkbox-inline">
+              <input type="checkbox" id="inlineCheckbox1" value="option1"> 1
+            </label>
+            <label class="checkbox-inline">
+              <input type="checkbox" id="inlineCheckbox2" value="option2"> 2
+            </label>
+            <label class="checkbox-inline">
+              <input type="checkbox" id="inlineCheckbox3" value="option3"> 3
+            </label>
+          </div>
+          <div class="form-group">
+            <label>邮箱</label>
+            <input type="number" class="form-control" name="email" placeholder="email" required>
+          </div>
+          <div class="form-group">
+            <label>密码</label>
+            <input type="number" class="form-control" name="weight" placeholder="weight" required>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>渠道类型</label>
-          <select class="form-control" name="channel_type" required>
-            <option value="cpa" title="cpa">cpa</option>
-            <option value="cps" title="cps">cps</option>
-          </select>
-        </div>
+
         <div class="help-block with-errors"></div>
 
       </div>
@@ -123,7 +104,7 @@
 <!-- /.modal -->
 
 
-<div id="detail_modal" class="modal fade">
+<div id="modal_detail" class="modal fade">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -152,9 +133,8 @@
   </div>
 
 
-
 <script>
-  var API_URL = 'http://' + location.host + '/channel_set/';
+  var API_URL = 'http://' + location.host + '/a_user/a_user_list';
 
   function queryParams(params) {
     var query_data = {};
@@ -167,9 +147,10 @@
 
   function actionFormatter(value) {
     return [
-      '<button class="update btn btn-default" href="javascript:" title="Update Item">编辑</button>',
-      '<button class="remove btn btn-default" href="javascript:" title="Delete Item">删除</button>',
-      '<button class="operate btn btn-default" href="javascript:" title="查看详情">详情</button>',
+      '<button class="update btn btn-default" href="javascript:" title="Update Item">编辑权限</button>',
+      '<button class="operate btn btn-default" href="javascript:" title="查看详情">查看权限</button>',
+      '<button class="operate1 btn btn-default" href="javascript:" title="Delete Item">恢复</button>',
+      '<button class="operate2 btn btn-default" href="javascript:" title="Delete Item">停用</button>',
     ].join('');
   }
 
@@ -178,25 +159,9 @@
     'click .update': function(e, value, row) {
       showModal($(this).attr('title'), row);
     },
-    'click .remove': function(e, value, row) {
-      if (confirm('Are you sure to delete this item?')) {
-        $.ajax({
-          url: API_URL + row.id,
-          type: 'delete',
-          success: function() {
-            $table.bootstrapTable('refresh');
-            showAlert('Delete item successful!', 'success');
-          },
-          error: function() {
-            showAlert('Delete item error!', 'danger');
-          }
-        })
-      }
-    },
     'click .operate': function(e, value, row) {
-      $detail_modal = $("#detail_modal")
-      $detail_modal.modal('show');
-
+      $modal_detail = $("#modal_detail")
+      $modal_detail.modal('show');
     }
   };
 
@@ -214,7 +179,7 @@
 
     if (row['ctime'] > '2016') {
       return {
-        classes: classes[2]
+        classes: classes[5]
       };
     }
     return {
@@ -225,8 +190,76 @@
 $.ready(function(){
     $table.bootstrapTable('refresh');
   })
+
 </script>
 
 <script src="{% static 'js/table_common.js' %}"></script>
+
+<script>
+
+
+$(function() {
+  // create event
+  $('.create').click(function() {
+    showModal($(this).text());
+  });
+  $modal_permission = $('#modal_permission'),
+
+  $modal_permission.validator().on('submit', function(e) {
+    if ($modal_permission.data('bs.validator').hasErrors()) {
+      e.preventDefault();
+    } else {
+      e.preventDefault();
+      var row = {};
+
+      $modal_permission.find('input[type!="radio"][name]').each(function() {
+        row[$(this).attr('name')] = $(this).val();
+      });
+
+      $modal_permission.find('select[name] option[title]:selected').each(function() {
+        row[$(this).parent("select").attr('name')] = $(this).val();
+      });
+
+      $modal_permission.find('input[type="radio"][name][title]:checked').each(function() {
+        row[$(this).attr('name')] = $(this).val();
+      });
+
+      $.ajax({
+        url: API_URL + ($modal_permission.data('id') || ''),
+        type: $modal_permission.data('id') ? 'put' : 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(row),
+        success: function(data) {
+          $modal_permission.modal('hide');
+          $table.bootstrapTable('refresh');
+          if (data.status == 0) {
+            showAlert(data.message, 'success');
+          } else {
+            showAlert(data.message, 'danger');
+          }
+        },
+        error: function() {
+          showAlert(($modal_permission.data('id') ? 'Update' : 'Create') + ' item error!', 'danger');
+        }
+      });
+    }
+  });
+});
+
+function showModal(title, row) {
+  row = row || {
+    id: 0
+  }; // default row value
+
+  $modal_permission.data('id', row.id);
+  $modal_permission.find('.modal-title').text(title);
+  for (var name in row) {
+    $modal_permission.find('input[type!="radio"][name="' + name + '"]').val(row[name]);
+    $modal_permission.find('select[name="' + name + '"] option[title="' + row[name] + '"]').attr("selected", true);
+    $modal_permission.find('input[type="radio"][name="' + name + '"][title="' + row[name] + '"]').attr("checked", true);
+  }
+  $modal_permission.modal('show');
+}
+</script>
 
 {% endblock main %}

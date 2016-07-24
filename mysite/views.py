@@ -47,6 +47,7 @@ def channel_set(request, param):
         except Exception as e:
             raise
         res = A_channel_set.get_list(query_filter)
+        print(type(res))
         option = {'is_public': global_conf.is_public,
         }
         res_1 = utils.prepare_table_data(res, option)

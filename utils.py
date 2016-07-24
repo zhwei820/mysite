@@ -18,10 +18,24 @@ import urllib
 import hashlib
 import json
 import copy
+from datetime import datetime
+from datetime import date
 from config import global_conf
 from config.global_conf import PAGE_CAPACITY
+from a_user.model.Menu import Menu
 
 from mysite.lib.mysql_manager_rw import mmysql_rw
+
+def check_permission(user_extra, action):
+    # print(action)
+    menu = Menu.where(action=action).select().execute().one()
+    # print(menu)
+    try:
+        permission = json.loads(user_extra.permission_str)
+        if permission['menu'][str(menu['parent_id'])]['sub'][str(menu['id'])]:
+            return True
+    except Exception as e:
+        return False
 
 def get_user_role(user_id):
     m = mmysql_rw()
@@ -40,7 +54,25 @@ def md5_str(strs):
     except Exception as e:
         return strs
 
-
+def objects_to_dict(objects):
+    def to_dict(object_c):
+        dict_c = dict(object_c.__dict__)
+        dict_cc = copy.deepcopy(dict_c)
+        for key, item in dict_c.items():
+            if key.startswith('_') or key.startswith('__'):
+                dict_cc.pop(key)
+            if isinstance(item, datetime):
+                dict_cc[key] = item.strftime('%Y-%m-%d %H:%M:%S')
+            elif isinstance(item, date):
+                dict_cc[key] = item.strftime('%Y-%m-%d')
+        return dict_cc
+    if isinstance(objects, list):
+        res = []
+        for object_c in objects:
+            res.append(to_dict(object_c))
+        return res
+    else:
+        return to_dict(objects)
 
 def cut_long_data(table_data):  # for display in table
     try:
@@ -56,7 +88,7 @@ def cut_long_data(table_data):  # for display in table
                     ii += 1
                     tmp_str += value[ii * unit_len : ]
                     table_data[jj][key] = tmp_str
-                elif isinstance(value, datetime.datetime):
+                elif isinstance(value, datetime):
                     table_data[jj][key] = str(value)
 
         return table_data
@@ -71,8 +103,9 @@ def prepare_table_data(table_data, option):  # prepare table data
             for key, value in table_data_c[jj].items():
                 for v, k in option.items():
                     if key == v:
-                        table_data[jj][key + '_c'] = table_data[jj][key]
-                        table_data[jj][key] = option[key].get(str(table_data[jj][key]), table_data[jj][key])
+                        print((table_data[jj][key]))
+                        print(str(table_data[jj][key]))
+                        table_data[jj]['_' + key] = option[key].get(str(table_data[jj][key]), table_data[jj][key])
         return cut_long_data(table_data)
     except Exception as e:
         print(traceback.format_exc())

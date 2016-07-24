@@ -19,7 +19,7 @@ from django.conf.urls import include, url, patterns
 from django.contrib import admin
 from django.conf.urls.static import static
 from django.conf import settings
-from a_user import urls as users_urls
+from a_user import urls as a_users_urls
 from mysite import views
 import sys
 import imp
@@ -28,7 +28,7 @@ imp.reload(sys)
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^user/', include(users_urls)),
+    url(r'^a_user/', include(a_users_urls)),
     url(r'^home/', views.home, name='home'),
     url(r'^channel/', views.channel, name='channel'),
     url(r'^channel_set/(\d+)?$', views.channel_set, name='channel_set'),

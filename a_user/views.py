@@ -18,8 +18,12 @@ import utils
 import logging
 import random
 import traceback
+import json
+import copy
 from mysite.lib.mysql_manager_rw import mmysql_rw
 from .model.UserExtra import UserExtra
+from .model.Menu import Menu
+from config import global_conf
 
 
 logger = logging.getLogger('mall_admin')
@@ -129,47 +133,6 @@ def update_password(request):
         except Exception as e:
             return JsonResponse(RESULT_404)
 
-@login_required
-def check_userlist(request):
-    if request.method == 'POST':
-        try:
-            result = {"status": 1, "message": ""}
-            # 只有超级管理员才有权限访问用户列表
-            if not utils.check_permission(request, "check_userlist"):
-                return JsonResponse(NO_PERMISSION)
-            user_role = utils.get_user_role(request.user)
-            need_field = PERMISSIONS[user_role]['check_user_field']
-            exec('user_list = User.objects.filter(is_active=1).values({0})'.format(str(need_field)[1:-1]))
-            # 根据角色和用户名过滤
-            role = request.POST.get('role','')
-            if role and USER_TYPE.has_key(role) :
-                user_list = user_list.filter(groups=role)
-            first_name = request.POST.get('username','')
-            if first_name:
-                user_list = user_list.filter(first_name__contains=first_name)
-            # 分页
-            result = utils.cut_page(request, user_list)
-            return JsonResponse(result)
-        except Exception as e:
-#            logger_error.error(e)
-            return JsonResponse(RESULT_404)
-
-@login_required
-def delete_user(request):
-    if request.method == 'POST':
-        try:
-            result = {"status": 1, "message": ""}
-            if request.user.is_superuser != 1:
-                return JsonResponse(NO_PERMISSION)
-            if not request.POST['user_id']:
-                return JsonResponse({"status": 0, "message":"no userid"})
-            user = User.objects.get(id=request.POST['user_id'])
-            user.is_active = 0
-            user.save()
-            return JsonResponse(result)
-        except Exception as e:
-            logger_error.error(e)
-            return JsonResponse(RESULT_404)
 
 @login_required
 def update_user(request):
@@ -193,8 +156,65 @@ def update_user(request):
             return JsonResponse(RESULT_404)
 
 @login_required
-def user_extra(request, id):
-    id = int(id)
+def user_list(request):
+    if not utils.check_permission(request.user.extra, 'a_user_list'):
+        return JsonResponse(NO_PERMISSION)
     if request.method == 'GET':
-        user_extra = UserExtra.where(user_id=id).findone()
-        return JsonResponse(user_extra['permission_str'] if user_extra and user_extra['permission_str'] else {})
+        try:
+            users = User.objects.all()
+            user_list = utils.objects_to_dict(list(users))
+            for ii in range(len(user_list)):
+                user_list[ii]['extra'] = utils.objects_to_dict(users[ii].extra)
+                user_list[ii]['role'] = user_list[ii]['extra']['role']
+            option = {'is_staff': global_conf.true_false,
+                      'is_superuser': global_conf.true_false,
+                      'is_active': global_conf.true_false,
+                      'role': global_conf.admin_role,
+                      }
+            user_list = utils.prepare_table_data(user_list, option)
+            return JsonResponse(user_list, safe = False)
+        except Exception as e:
+#            logger_error.error(e)
+            print(traceback.format_exc())
+            return JsonResponse(RESULT_404)
+
+@login_required
+def user_extra(request, id):
+    id = int(id) if id else 0
+    if not utils.check_permission(request.user.extra, 'a_user_list'):
+        return JsonResponse(NO_PERMISSION)
+
+    if request.method == 'GET':
+        user_extra = UserExtra.where(user_id=id).select().execute().one()
+        return JsonResponse(json.loads(user_extra['permission_str'], ) if user_extra and user_extra['permission_str'] else {})
+
+
+@login_required
+def user_list_index(request):
+    if not utils.check_permission(request.user.extra, 'a_user_list'):
+        return JsonResponse(NO_PERMISSION)
+    return render(request, 'a_user_list.html')
+
+@login_required
+def menus(request, id):
+    id = int(id) if id else 0
+    if not utils.check_permission(request.user.extra, 'a_user_list'):
+        return JsonResponse(NO_PERMISSION)
+    if request.method == 'GET':
+        menus = Menu.where().select().execute().all()
+        menu_tree = {}
+        for item in menus:
+            if item['parent_id'] != 0:
+                if str(item['parent_id']) in menu_tree:
+                    menu_tree[str(item['parent_id'])]['sub'].append(item)
+                else:
+                    menu_tree[str(item['parent_id'])] = {'sub': [item]}
+            else:
+                print(item)
+                if str(item['id']) in menu_tree:
+                    menu_tree[str(item['id'])]['name'] = item['name']
+                    menu_tree[str(item['id'])]['icon'] = item['icon']
+                else:
+                    menu_tree[str(item['id'])] = {'name': item['name'], 'icon': item['icon'], 'sub': []}
+
+        return JsonResponse(menu_tree)

@@ -3,6 +3,7 @@ from django.core.exceptions import PermissionDenied
 from django.utils.decorators import available_attrs
 from django.http import JsonResponse
 
+
 def user_pass_func(test_func):
     """
     Decorator for views that checks that the user passes the given test,

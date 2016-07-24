@@ -16,18 +16,31 @@ yes_no = {
     '0' : '否',
     '1' : '是'
 }
+
+true_false = {
+    'False' : '否',
+    'True' : '是'
+}
+
 public_status = {
     '0' : '失效',
     '1' : '<span class="green">有效</span>'
 }
 
-
-
 data = 'hbdata/',  # 项目资源文件目录 html/hbdat}
-pk_os = {
+
+admin_role = {
+    '1': '管理员',
+    '2': '财务',
+    '3': '运营',
+    '4': '商务',
+}
+
+os_type = {
     '1' : 'android',
     '2' : 'ios',
 }
+
 admin_status = {
     '0' : '正常',
     '1' : '停用',
