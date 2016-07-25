@@ -12,7 +12,7 @@ urlpatterns = [
     url(r'^update/', views.update_user, name='update'),
     url(r'^user_extra/(\d+)?$', views.user_extra),
 
-    url(r'^a_user_list/', views.user_list),
+    url(r'^a_user_list/(\d+)?$', views.user_list),
     url(r'^a_user_list_index/', views.user_list_index),
     url(r'^a_menus/(\d+)?$', views.menus),
 ]

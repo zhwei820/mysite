@@ -156,7 +156,7 @@ def update_user(request):
             return JsonResponse(RESULT_404)
 
 @login_required
-def user_list(request):
+def user_list(request, param):
     if not utils.check_permission(request.user.extra, 'a_user_list_index'):
         return JsonResponse(NO_PERMISSION)
     if request.method == 'GET':
@@ -177,6 +177,21 @@ def user_list(request):
 #            logger_error.error(e)
             print(traceback.format_exc())
             return JsonResponse(RESULT_404)
+    elif request.method == "PUT":
+        id = int(param)
+        try:
+            keys = ['channel', 'parent_id', 'weight', 'remark', 'channel_type', 'is_public']
+            par = utils.get_post_parameter(request, keys)
+        except Exception as e:
+            print(traceback.format_exc())
+            return JsonResponse({"status": 1, "message":"参数错误"})
+        a_channel_set = A_channel_set.at(id).getone()
+        a_channel_set = utils.model_set(a_channel_set, par)
+        try:
+            a_channel_set.save()
+        except Exception as e:
+            return JsonResponse({"status": 1, "message":"渠道名相同"})
+        return JsonResponse({"status": 0, "message":"编辑成功"})
 
 @login_required
 def user_extra(request, id):

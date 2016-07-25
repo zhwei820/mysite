@@ -85,7 +85,7 @@
 
 
 <script>
-  var API_URL = 'http://' + location.host + '/a_user/a_user_list';
+  var API_URL = 'http://' + location.host + '/a_user/a_user_list/';
 
   function queryParams(params) {
     var query_data = {};
@@ -163,7 +163,7 @@ $(function() {
       e.preventDefault();
       var row = {};
 
-      $modal_permission.find('input[type!="radio"][name]').each(function() {
+      $modal_permission.find('input[type!="radio"][type!="checkbox"][name]').each(function() {
         row[$(this).attr('name')] = $(this).val();
       });
 
@@ -174,6 +174,16 @@ $(function() {
       $modal_permission.find('input[type="radio"][name][title]:checked').each(function() {
         row[$(this).attr('name')] = $(this).val();
       });
+
+      $modal_permission.find('input[type="checkbox"]:checked').each(function(){
+        if(!row[$(this).attr('name')]){
+          row[$(this).attr('name')] = [];
+        }
+        console.log(row[$(this).attr('name')]);
+        console.log(row);
+
+        row[$(this).attr('name')].push($(this).val());
+       });
 
       $.ajax({
         url: API_URL + ($modal_permission.data('id') || ''),
@@ -211,7 +221,7 @@ function showModal(title, row) {
   }
 
     $.ajax({
-        url: API_URL.substring(0, API_URL.length - 1 - "a_user_list".length) + '/a_menus/',
+        url: API_URL.substring(0, API_URL.length - 1 - "a_user_list".length) + 'a_menus/',
         type: 'get',
         contentType: 'application/json',
         success: function(data) {
@@ -227,7 +237,7 @@ function showModal(title, row) {
               snippet += '<label>' + name + '</label><span>&nbsp;<span>';
               for (var key1 in data[key]['sub']) {
                 snippet += '<label class="checkbox-inline">\
-                    <input type="checkbox" id="permission_' + data[key]['sub'][key1]['id'] + '" value="' + data[key]['sub'][key1]['id'] + '"> ' + data[key]['sub'][key1]['name'] + '\
+                    <input type="checkbox" id="permission_' + data[key]['sub'][key1]['id'] + '" name="permission_' + key + '" value="' + data[key]['sub'][key1]['id'] + '"> ' + data[key]['sub'][key1]['name'] + '\
                   </label>'
               }
               snippet += '</div>';
@@ -243,7 +253,6 @@ function showModal(title, row) {
             var menus = permission_str['menu'];
             for (var key in menus) {
               for (var key1 in menus[key]['sub']) {
-                console.log($("#permission_" + key1).val());
                 $("#permission_" + key1).attr("checked", true);
               }
             }
