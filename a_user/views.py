@@ -180,18 +180,23 @@ def user_list(request, param):
     elif request.method == "PUT":
         id = int(param)
         try:
-            keys = ['channel', 'parent_id', 'weight', 'remark', 'channel_type', 'is_public']
+            keys = ['permission_1', 'permission_2', 'permission_3', 'permission_20']
             par = utils.get_post_parameter(request, keys)
         except Exception as e:
             print(traceback.format_exc())
             return JsonResponse({"status": 1, "message":"参数错误"})
-        a_channel_set = A_channel_set.at(id).getone()
-        a_channel_set = utils.model_set(a_channel_set, par)
+        menus = Menu.where().select().execute().all()
+        permission_str = get_permission_str(menus, par);
         try:
             a_channel_set.save()
         except Exception as e:
             return JsonResponse({"status": 1, "message":"渠道名相同"})
         return JsonResponse({"status": 0, "message":"编辑成功"})
+
+def get_permission_str(menus, par):
+    for key, item in par.items():
+        parent_id = int(key.split('_')[1])
+        
 
 @login_required
 def user_extra(request, id):
