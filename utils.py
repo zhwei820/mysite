@@ -32,6 +32,7 @@ def check_permission(user_extra, action):
     # print(menu)
     try:
         permission = json.loads(user_extra.permission_str)
+        print(permission)
         if permission['menu'][str(menu['parent_id'])]['sub'][str(menu['id'])]:
             return True
     except Exception as e:

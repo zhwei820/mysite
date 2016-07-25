@@ -65,29 +65,9 @@
       </div>
 
       <div class="modal-body">
-        <div class="permission">
-          <div class="form-group">
-            <label>用户名</label>
-            <label class="checkbox-inline">
-              <input type="checkbox" id="inlineCheckbox1" value="option1"> 1
-            </label>
-            <label class="checkbox-inline">
-              <input type="checkbox" id="inlineCheckbox2" value="option2"> 2
-            </label>
-            <label class="checkbox-inline">
-              <input type="checkbox" id="inlineCheckbox3" value="option3"> 3
-            </label>
-          </div>
-          <div class="form-group">
-            <label>邮箱</label>
-            <input type="number" class="form-control" name="email" placeholder="email" required>
-          </div>
-          <div class="form-group">
-            <label>密码</label>
-            <input type="number" class="form-control" name="weight" placeholder="weight" required>
-          </div>
-        </div>
+        <div id="permission">
 
+        </div>
 
         <div class="help-block with-errors"></div>
 
@@ -102,35 +82,6 @@
   <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
-
-
-<div id="modal_detail" class="modal fade">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title"></h4>
-        <div class="modal-body">
-          <div class="panel panel-default">
-            <div class="panel-heading">Panel heading without title</div>
-            <div class="panel-body">
-              Panel content
-            </div>
-          </div>
-
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h3 class="panel-title">Panel title</h3>
-            </div>
-            <div class="panel-body">
-              Panel content
-            </div>
-          </div>
-        </div>
-      </div>
-      </div>
-    </div>
-  </div>
 
 
 <script>
@@ -258,6 +209,49 @@ function showModal(title, row) {
     $modal_permission.find('select[name="' + name + '"] option[title="' + row[name] + '"]').attr("selected", true);
     $modal_permission.find('input[type="radio"][name="' + name + '"][title="' + row[name] + '"]').attr("checked", true);
   }
+
+    $.ajax({
+        url: API_URL.substring(0, API_URL.length - 1 - "a_user_list".length) + '/a_menus/',
+        type: 'get',
+        contentType: 'application/json',
+        success: function(data) {
+            if (typeof(data) != "object") {
+                data = JSON.parse(data);
+                data = sortObjectKeys(data);
+            }
+            $('#permission').empty();
+
+            for (var key in data) {
+              var snippet = '<div class="form-group">';
+              var name = data[key]['name'];
+              snippet += '<label>' + name + '</label><span>&nbsp;<span>';
+              for (var key1 in data[key]['sub']) {
+                snippet += '<label class="checkbox-inline">\
+                    <input type="checkbox" id="permission_' + data[key]['sub'][key1]['id'] + '" value="' + data[key]['sub'][key1]['id'] + '"> ' + data[key]['sub'][key1]['name'] + '\
+                  </label>'
+              }
+              snippet += '</div>';
+              $('#permission').append(snippet);
+            }
+            var permission_str = row['extra']['permission_str'];
+            if (typeof(permission_str) != "object") {
+                permission_str = JSON.parse(permission_str);
+                permission_str = sortObjectKeys(permission_str);
+            }
+
+            console.log(permission_str['menu']);
+            var menus = permission_str['menu'];
+            for (var key in menus) {
+              for (var key1 in menus[key]['sub']) {
+                console.log($("#permission_" + key1).val());
+                $("#permission_" + key1).attr("checked", true);
+              }
+            }
+        },
+        error: function() {
+            console.log('error');
+        }
+    });
   $modal_permission.modal('show');
 }
 </script>

@@ -1,4 +1,9 @@
 "use strict"
+function sortObjectKeys(obj) {
+  var tmp = {};
+  Object.keys(obj).sort().forEach(function(k) { tmp[k] = obj[k] });
+  return tmp;
+}
 
 Date.prototype.Format = function(fmt) //author: meizz
   {

@@ -157,7 +157,7 @@ def update_user(request):
 
 @login_required
 def user_list(request):
-    if not utils.check_permission(request.user.extra, 'a_user_list'):
+    if not utils.check_permission(request.user.extra, 'a_user_list_index'):
         return JsonResponse(NO_PERMISSION)
     if request.method == 'GET':
         try:
@@ -181,7 +181,7 @@ def user_list(request):
 @login_required
 def user_extra(request, id):
     id = int(id) if id else 0
-    if not utils.check_permission(request.user.extra, 'a_user_list'):
+    if not utils.check_permission(request.user.extra, 'a_user_list_index'):
         return JsonResponse(NO_PERMISSION)
 
     if request.method == 'GET':
@@ -191,14 +191,14 @@ def user_extra(request, id):
 
 @login_required
 def user_list_index(request):
-    if not utils.check_permission(request.user.extra, 'a_user_list'):
+    if not utils.check_permission(request.user.extra, 'a_user_list_index'):
         return JsonResponse(NO_PERMISSION)
     return render(request, 'a_user_list.html')
 
 @login_required
 def menus(request, id):
     id = int(id) if id else 0
-    if not utils.check_permission(request.user.extra, 'a_user_list'):
+    if not utils.check_permission(request.user.extra, 'a_user_list_index'):
         return JsonResponse(NO_PERMISSION)
     if request.method == 'GET':
         menus = Menu.where().select().execute().all()
