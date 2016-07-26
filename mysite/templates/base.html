@@ -10,8 +10,6 @@
 
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
-  <link rel="stylesheet" href="http://cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="http://cdn.bootcss.com/ionicons/2.0.1/css/ionicons.min.css">
   <link rel="stylesheet" href="{% static 'css/AdminLTE.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/skin-purple.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
@@ -143,7 +141,7 @@
         <ul class="sidebar-menu">
           {% for menu in user.extra.get_menu %}
             <li class="treeview">
-              <a href="#"><i class="fa {{ menu.icon }}"></i> <span>{{ menu.name }}</span> <i class="fa fa-angle-left pull-right"></i></a>
+              <a href="#"><i class="fa {{ menu.icon }}"></i> <span>{{ menu.name }}</span> <i class="glyphicon fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
                   {% for v in menu.sub %}
                     <li><a href="{{ v.url }}">{{ v.name }}</a></li>

@@ -6,6 +6,10 @@
 <script src="{% static 'bootstrap-table/bootstrap-table.min.js' %}"></script>
 
 <link rel="stylesheet" href="{% static 'bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css' %}">
+
+<link rel="stylesheet" href="{% static 'icon-picker/icon-picker.min.css' %}">
+<script src="{% static 'icon-picker/icon-picker.min.js' %}"></script>
+
 <script src="{% static 'bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}"></script>
 <script src="{% static 'bootstrap/js/bootstrap-validator.js' %}"></script>
 
@@ -36,6 +40,8 @@
 <p class="bg-success alert">...</p>
 
 <div class="form-inline">
+  <input type="text" name="someName" class="icon-picker" />
+
   <div class="form-group">
     <label for="">email</label>
     <input type='text' class="form-control date_time_input" name="email" />
@@ -69,13 +75,15 @@
       </div>
 
       <div class="modal-body">
-        <div id="permission">
+          <input type="text" name="someName" class="icon-picker" />
 
-        </div>
+          <div id="permission">
 
-        <div class="help-block with-errors"></div>
+          </div>
 
+          <div class="help-block with-errors"></div>
       </div>
+
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-primary submit" >Submit</button>
@@ -237,6 +245,7 @@ function showModal(title, row) {
               var snippet = '<div class="form-group">';
               var name = data[key]['name'];
               snippet += '<label>' + name + '</label><span>&nbsp;<span>';
+              snippet += ''
               for (var key1 in data[key]['sub']) {
                 snippet += '<label class="checkbox-inline">\
                     <input type="checkbox" id="permission_' + data[key]['sub'][key1]['id'] + '" name="permission_' + key + '" value="' + data[key]['sub'][key1]['id'] + '"> ' + data[key]['sub'][key1]['name'] + '\
@@ -264,6 +273,13 @@ function showModal(title, row) {
     });
   $modal_permission.modal('show');
 }
+
+</script>
+
+<script type="text/javascript">
+        $(function () {
+            $(".icon-picker").iconPicker();
+        });
 </script>
 
 {% endblock main %}
