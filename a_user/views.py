@@ -178,25 +178,35 @@ def user_list(request, param):
             print(traceback.format_exc())
             return JsonResponse(RESULT_404)
     elif request.method == "PUT":
-        id = int(param)
+        user_id = int(param)
         try:
-            keys = ['permission_1', 'permission_2', 'permission_3', 'permission_20']
+            keys = ['permission_1', 'permission_2', 'permission_3', 'permission_4', 'permission_20']
             par = utils.get_post_parameter(request, keys)
         except Exception as e:
             print(traceback.format_exc())
             return JsonResponse({"status": 1, "message":"参数错误"})
-        menus = Menu.where().select().execute().all()
+        res = Menu.where().select().execute().all()
+        menus = {}
+        for item in res:
+            menus[str(item['id'])] = item
         permission_str = get_permission_str(menus, par);
+        user_extra = UserExtra.where(user_id=user_id).select().execute().one()
+        user_extra.permission_str = permission_str
+        print(permission_str)
         try:
-            a_channel_set.save()
+            user_extra.save()
         except Exception as e:
-            return JsonResponse({"status": 1, "message":"渠道名相同"})
+            return JsonResponse({"status": 1, "message":"编辑失败"})
         return JsonResponse({"status": 0, "message":"编辑成功"})
 
 def get_permission_str(menus, par):
+    permission = {"menu": {}}
     for key, item in par.items():
-        parent_id = int(key.split('_')[1])
-        
+        parent_id = key.split('_')[1]
+        permission['menu'][parent_id] = {"name": menus[parent_id]['name'], "icon": menus[parent_id]['icon'], "sub": {}}
+        for id in item:
+            permission['menu'][parent_id]['sub'][str(id)] = {"name": menus[str(id)]['name'], "url": "/" + menus[str(id)]['type'] + "/" + menus[str(id)]['action']}
+    return json.dumps(permission)
 
 @login_required
 def user_extra(request, id):
@@ -230,7 +240,6 @@ def menus(request, id):
                 else:
                     menu_tree[str(item['parent_id'])] = {'sub': [item]}
             else:
-                print(item)
                 if str(item['id']) in menu_tree:
                     menu_tree[str(item['id'])]['name'] = item['name']
                     menu_tree[str(item['id'])]['icon'] = item['icon']

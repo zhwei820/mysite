@@ -32,7 +32,6 @@ def check_permission(user_extra, action):
     # print(menu)
     try:
         permission = json.loads(user_extra.permission_str)
-        print(permission)
         if permission['menu'][str(menu['parent_id'])]['sub'][str(menu['id'])]:
             return True
     except Exception as e:
@@ -104,13 +103,10 @@ def prepare_table_data(table_data, option):  # prepare table data
             for key, value in table_data_c[jj].items():
                 for v, k in option.items():
                     if key == v:
-                        print((table_data[jj][key]))
-                        print(str(table_data[jj][key]))
                         table_data[jj]['_' + key] = option[key].get(str(table_data[jj][key]), table_data[jj][key])
         return cut_long_data(table_data)
     except Exception as e:
         print(traceback.format_exc())
-
         return ''
 
 def get_post_parameter(request, keys):
