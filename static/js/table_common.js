@@ -71,6 +71,9 @@ $(function() {
     var $table = $('#table').bootstrapTable({
       url: API_URL
     }),
-    $modal = $('#modal'),
     $alert = $('.alert').hide();
 });
+
+function refresh_table(){
+  $('#table').bootstrapTable('refresh');
+}

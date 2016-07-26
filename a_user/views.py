@@ -155,6 +155,8 @@ def update_user(request):
             logger_error.error(e)
             return JsonResponse(RESULT_404)
 
+keys = ['permission_1', 'permission_2', 'permission_3', 'permission_4', 'permission_20']
+
 @login_required
 def user_list(request, param):
     if not utils.check_permission(request.user.extra, 'a_user_list_index'):
@@ -180,7 +182,6 @@ def user_list(request, param):
     elif request.method == "PUT":
         user_id = int(param)
         try:
-            keys = ['permission_1', 'permission_2', 'permission_3', 'permission_4', 'permission_20']
             par = utils.get_post_parameter(request, keys)
         except Exception as e:
             print(traceback.format_exc())
@@ -190,6 +191,7 @@ def user_list(request, param):
         for item in res:
             menus[str(item['id'])] = item
         permission_str = get_permission_str(menus, par);
+        print(permission_str)
         user_extra = UserExtra.where(user_id=user_id).select().execute().one()
         user_extra.permission_str = permission_str
         print(permission_str)
@@ -200,12 +202,14 @@ def user_list(request, param):
         return JsonResponse({"status": 0, "message":"编辑成功"})
 
 def get_permission_str(menus, par):
-    permission = {"menu": {}}
-    for key, item in par.items():
+    permission = {"menu": []}
+    for key in keys:
+        item = par[key]
         parent_id = key.split('_')[1]
-        permission['menu'][parent_id] = {"name": menus[parent_id]['name'], "icon": menus[parent_id]['icon'], "sub": {}}
+        menu_group = {"name": menus[parent_id]['name'], "icon": menus[parent_id]['icon'], "sub": [], "id": parent_id}
         for id in item:
-            permission['menu'][parent_id]['sub'][str(id)] = {"name": menus[str(id)]['name'], "url": "/" + menus[str(id)]['type'] + "/" + menus[str(id)]['action']}
+             menu_group['sub'].append({"name": menus[str(id)]['name'], "url": "/" + menus[str(id)]['type'] + "/" + menus[str(id)]['action'], "id": id})
+        permission['menu'].append(menu_group)
     return json.dumps(permission)
 
 @login_required

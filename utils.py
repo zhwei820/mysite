@@ -27,15 +27,19 @@ from a_user.model.Menu import Menu
 from mysite.lib.mysql_manager_rw import mmysql_rw
 
 def check_permission(user_extra, action):
-    # print(action)
     menu = Menu.where(action=action).select().execute().one()
-    # print(menu)
-    try:
-        permission = json.loads(user_extra.permission_str)
-        if permission['menu'][str(menu['parent_id'])]['sub'][str(menu['id'])]:
-            return True
-    except Exception as e:
-        return False
+    # try:
+    permission = json.loads(user_extra.permission_str)
+    print(permission)
+    print(menu)
+    for item in permission['menu']:
+        if str(item['id']) == str(menu['parent_id']):
+            for v in item['sub']:
+                if str(v['id']) == str(menu['id']):
+                    return True
+    return False
+    # except Exception as e:
+    #     return False
 
 def get_user_role(user_id):
     m = mmysql_rw()

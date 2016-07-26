@@ -118,6 +118,7 @@
 
 
   function showAlert(title, type) {
+    $alert = $(".alert");
     $alert.attr('class', 'alert alert-' + type || 'success')
       .html('<i class="glyphicon glyphicon-check"></i> ' + title).show();
     setTimeout(function() {
@@ -139,7 +140,7 @@
   }
 
 $.ready(function(){
-    $table.bootstrapTable('refresh');
+    refresh_table();
   })
 
 </script>
@@ -179,8 +180,6 @@ $(function() {
         if(!row[$(this).attr('name')]){
           row[$(this).attr('name')] = [];
         }
-        console.log(row[$(this).attr('name')]);
-        console.log(row);
 
         row[$(this).attr('name')].push($(this).val());
        });
@@ -192,7 +191,7 @@ $(function() {
         data: JSON.stringify(row),
         success: function(data) {
           $modal_permission.modal('hide');
-          $table.bootstrapTable('refresh');
+          refresh_table();
           if (data.status == 0) {
             showAlert(data.message, 'success');
           } else {
@@ -230,8 +229,7 @@ function showModal(title, row) {
                 data = sortObjectKeys(data);
             }
             $('#permission').empty();
-
-            for (var key in data) {
+            for(var key in data) {
               var snippet = '<div class="form-group">';
               var name = data[key]['name'];
               snippet += '<label>' + name + '</label><span>&nbsp;<span>';
@@ -252,7 +250,7 @@ function showModal(title, row) {
             var menus = permission_str['menu'];
             for (var key in menus) {
               for (var key1 in menus[key]['sub']) {
-                $("#permission_" + key1).attr("checked", true);
+                $("#permission_" +  menus[key]['sub'][key1]['id']).attr("checked", true);
               }
             }
         },

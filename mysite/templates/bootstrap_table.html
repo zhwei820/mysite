@@ -233,7 +233,7 @@
           url: API_URL + row.id,
           type: 'delete',
           success: function() {
-            $table.bootstrapTable('refresh');
+            refresh_table();
             showAlert('Delete item successful!', 'success');
           },
           error: function() {
@@ -251,6 +251,7 @@
 
 
   function showAlert(title, type) {
+    $alert = $(".alert");
     $alert.attr('class', 'alert alert-' + type || 'success')
       .html('<i class="glyphicon glyphicon-check"></i> ' + title).show();
     setTimeout(function() {
@@ -272,7 +273,7 @@
   }
 
 $.ready(function(){
-    $table.bootstrapTable('refresh');
+    refresh_table();
   })
 
   $(function() {
@@ -280,7 +281,7 @@ $.ready(function(){
     $('.create').click(function() {
       showModal($(this).text());
     });
-
+    s$modal = $("#modal");
     $modal.validator().on('submit', function(e) {
       if ($modal.data('bs.validator').hasErrors()) {
         e.preventDefault();
@@ -307,7 +308,7 @@ $.ready(function(){
           data: JSON.stringify(row),
           success: function(data) {
             $modal.modal('hide');
-            $table.bootstrapTable('refresh');
+            refresh_table();
             if (data.status == 0) {
               showAlert(data.message, 'success');
             } else {
