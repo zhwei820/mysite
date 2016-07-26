@@ -227,7 +227,7 @@ def user_extra(request, id):
 def user_list_index(request):
     if not utils.check_permission(request.user.extra, 'a_user_list_index'):
         return JsonResponse(NO_PERMISSION)
-    return render(request, 'a_user_list.html')
+    return render(request, 'a_user_list.html', {"breadcrumb1" : "设置", "breadcrumb2" : "管理员管理"})
 
 @login_required
 def menus(request, id):

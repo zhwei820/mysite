@@ -28,6 +28,11 @@
 </style>
 
 {% endblock head %} {% block main %}
+
+<ul class="nav nav-tabs">
+    <li role="presentation" class="active"><a href="/a_user/a_user_list_index/">管理员管理</a></li>
+
+</ul>
 <p class="bg-success alert">...</p>
 
 <div class="form-inline">
@@ -36,7 +41,6 @@
     <input type='text' class="form-control date_time_input" name="email" />
   </div>
 </div>
-
 
 <table id="table" data-show-refresh="true" data-toolbar=".form-inline" data-sort-name="id" data-sort-order="desc" data-row-style="rowStyle" data-pagination="true" data-page-size="10" data-page-list="[10,20]" data-pagination-first-text="First" data-pagination-pre-text="Previous"
   data-pagination-next-text="Next" data-pagination-last-text="Last" data-query-params="queryParams">
