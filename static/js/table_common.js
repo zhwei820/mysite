@@ -5,6 +5,16 @@ function sortObjectKeys(obj) {
   return tmp;
 }
 
+String.prototype.startWith=function(str){
+ if(str==null||str==""||this.length==0||str.length>this.length)
+  return false;
+ if(this.substr(0,str.length)==str)
+    return true;
+ else
+    return false;
+ return true;
+}
+
 Date.prototype.Format = function(fmt) //author: meizz
   {
     var o = {
@@ -76,4 +86,30 @@ $(function() {
 
 function refresh_table(){
   $('#table').bootstrapTable('refresh');
+}
+
+function ajax_get(url) {
+    $.ajax({
+      url: url,
+      type: 'get',
+      contentType: 'application/json',
+      data: '',
+      success: function(data) {
+          if (typeof(data) != "object") {
+              data = JSON.parse(data)
+          }
+          if (data.status == 0) {
+              refresh_table();
+              showAlert(data.message, 'success');
+          } else {
+              showAlert(data.message, 'danger');
+              e.preventDefault();
+          }
+
+      },
+      error: function() {
+          console.log('error');
+          showAlert('操作失败', 'danger')
+      }
+    });
 }

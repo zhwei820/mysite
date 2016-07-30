@@ -191,10 +191,8 @@ def user_list(request, param):
         for item in res:
             menus[str(item['id'])] = item
         permission_str = get_permission_str(menus, par);
-        print(permission_str)
         user_extra = UserExtra.where(user_id=user_id).select().execute().one()
         user_extra.permission_str = permission_str
-        print(permission_str)
         try:
             user_extra.save()
         except Exception as e:
@@ -251,3 +249,70 @@ def menus(request, id):
                     menu_tree[str(item['id'])] = {'name': item['name'], 'icon': item['icon'], 'sub': []}
 
         return JsonResponse(menu_tree)
+
+
+@login_required
+def menus_index(request):
+    if not utils.check_permission(request.user.extra, 'a_user_list_index'):
+        return JsonResponse(NO_PERMISSION)
+    return render(request, 'a_menus.html', {"breadcrumb1" : "设置", "breadcrumb2" : "菜单管理", 'parent_menus': get_parent_menus()})
+
+def get_parent_menus():
+    res = Menu.where(parent_id=0).select().execute().all()
+    a_parent_menus = {}
+    for item in res:
+        a_parent_menus[str(item['id'])] = item['name']
+    return a_parent_menus
+
+@login_required
+def menus_data(request, id):
+    id = int(id) if id else 0
+    if not utils.check_permission(request.user.extra, 'a_user_list_index'):
+        return JsonResponse(NO_PERMISSION)
+    if request.method == 'GET':
+        menus = Menu.where().select().execute().all()
+        option = {'status': global_conf.public_status,
+                  'parent_id': get_parent_menus(),
+                  }
+        menus = utils.prepare_table_data(menus, option)
+        return JsonResponse(menus, safe = False)
+    elif request.method == "PUT":
+        menus_keys = ['type', 'action', 'name', 'parent_id', 'icon',]
+        try:
+            par = utils.get_post_parameter(request, menus_keys)
+        except Exception as e:
+            print(traceback.format_exc())
+            return JsonResponse({"status": 1, "message":"参数错误"})
+        a_menu = Menu.where(id=id).select().execute().one()
+        a_menu = utils.model_set(a_menu, par)
+        try:
+            a_menu.save()
+        except Exception as e:
+            return JsonResponse({"status": 1, "message":"编辑失败"})
+        return JsonResponse({"status": 0, "message":"编辑成功"})
+
+@login_required
+def menu_open(request, id):
+    id = int(id) if id else 0
+    if not utils.check_permission(request.user.extra, 'a_user_list_index'):
+        return JsonResponse(NO_PERMISSION)
+    a_menu = Menu.where(id=id).select().execute().one()
+    a_menu.status = 1
+    try:
+        a_menu.save()
+    except Exception as e:
+        return JsonResponse({"status": 1, "message":"编辑失败"})
+    return JsonResponse({"status": 0, "message":"编辑成功"})
+
+@login_required
+def menu_shut(request, id):
+    id = int(id) if id else 0
+    if not utils.check_permission(request.user.extra, 'a_user_list_index'):
+        return JsonResponse(NO_PERMISSION)
+    a_menu = Menu.where(id=id).select().execute().one()
+    a_menu.status = 0
+    try:
+        a_menu.save()
+    except Exception as e:
+        return JsonResponse({"status": 1, "message":"编辑失败"})
+    return JsonResponse({"status": 0, "message":"编辑成功"})

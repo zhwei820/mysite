@@ -30,8 +30,8 @@ def check_permission(user_extra, action):
     menu = Menu.where(action=action).select().execute().one()
     # try:
     permission = json.loads(user_extra.permission_str)
-    print(permission)
-    print(menu)
+    # print(permission)
+    # print(menu)
     for item in permission['menu']:
         if str(item['id']) == str(menu['parent_id']):
             for v in item['sub']:

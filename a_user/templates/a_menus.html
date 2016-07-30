@@ -1,0 +1,285 @@
+{% extends 'base.html' %} {% load staticfiles %} {% load i18n %} {% block title %}菜单管理{% endblock %} {% block head %}
+
+<script src="{% static 'bootstrap-datetimepicker/js/moment.js' %}"></script>
+
+<link rel="stylesheet" href="{% static 'bootstrap-table/bootstrap-table.min.css' %}">
+<script src="{% static 'bootstrap-table/bootstrap-table.min.js' %}"></script>
+
+<link rel="stylesheet" href="{% static 'bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css' %}">
+
+<link rel="stylesheet" href="{% static 'bootstrap-select/css/bootstrap-select.min.css' %}">
+<script src="{% static 'bootstrap-select/js/bootstrap-select.min.js' %}"></script>
+
+<script src="{% static 'bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}"></script>
+<script src="{% static 'bootstrap/js/bootstrap-validator.js' %}"></script>
+
+<style>
+  .update {
+    color: #333;
+    margin-right: 5px;
+  }
+
+  .remove {
+    color: red;
+    margin-left: 5px;
+  }
+
+  .alert {
+    padding: 0 14px;
+    margin-bottom: 0;
+    display: inline-block;
+  }
+
+</style>
+
+{% endblock head %} {% block main %}
+
+<ul class="nav nav-tabs">
+    <li role="presentation" class="active"><a href="/a_user/a_menus_index/">菜单管理</a></li>
+
+</ul>
+<p class="bg-success alert">...</p>
+
+<div class="form-inline">
+  <button type="button" class="btn btn-primary create">
+    添加
+  </button>
+  <!-- <div class="form-group">
+    <label for="">email</label>
+    <input type='text' class="form-control date_time_input" name="email" />
+  </div> -->
+</div>
+
+<table id="table" data-show-refresh="true" data-toolbar=".form-inline" data-sort-name="id" data-sort-order="desc" data-row-style="rowStyle" data-pagination="true" data-page-size="10" data-page-list="[10,20]" data-pagination-first-text="First" data-pagination-pre-text="Previous"
+  data-pagination-next-text="Next" data-pagination-last-text="Last" data-query-params="queryParams">
+  <thead>
+    <tr>
+      <th data-field="action" data-align="center" data-formatter="actionFormatter" data-events="actionEvents">操作</th>
+      <th data-sortable="true" data-field="id" width="100">id</th>
+      <th data-sortable="true" data-field="type" width="100">类型</th>
+      <th data-sortable="true" data-field="action">操作</th>
+      <th data-sortable="true" data-field="_status">状态</th>
+      <th data-sortable="true" data-field="name">名称</th>
+      <th data-sortable="true" data-field="_parent_id">父菜单</th>
+      <th data-sortable="true" data-field="icon">图标</th>
+
+
+    </tr>
+  </thead>
+</table>
+
+<div id="modal_menu" class="modal fade" data-toggle="validator" role="form">
+  <div class="modal-dialog">
+    <form class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"></h4>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>名称</label>
+          <input type="text" class="form-control" name="name" placeholder="name" required >
+        </div>
+        <div class="form-group">
+          <label>父菜单</label>
+          <select class="form-control" name="parent_id" >
+            <option value="" title="">一级菜单</option>
+
+            {% for id, name in parent_menus.items %}
+              <option value="{{ id }}" title="{{ id }}">{{ name }}</option>
+            {% endfor %}
+
+          </select>
+        </div>
+        <div class="form-group">
+          <label>类型</label>
+          <input type="text" class="form-control" name="type" placeholder="type" required >
+        </div>
+        <div class="form-group">
+          <label>操作</label>
+          <input type="text" class="form-control" name="action" placeholder="action" required >
+        </div>
+
+        <div class="form-group">
+          <label>icon</label>
+          <select class="form-control selectpicker" name="icon" >
+              <option data-icon="" value="">no icon</option>
+              <option data-icon="glyphicon-asterisk" value="glyphicon-asterisk" title="glyphicon-asterisk">glyphicon-asterisk</option>
+              <option data-icon="glyphicon-th-list" value="glyphicon-th-list" title="glyphicon-th-list">glyphicon-th-list</option>
+              <option data-icon="glyphicon-th-large" value="glyphicon-th-large" title="glyphicon-th-large">glyphicon-th-large</option>
+              <option data-icon="glyphicon-star" value="glyphicon-star" title="glyphicon-star">glyphicon-star</option>
+              <option data-icon="glyphicon-user" value="glyphicon-user" title="glyphicon-user">glyphicon-user</option>
+              <option data-icon="glyphicon-glass" value="glyphicon-glass" title="glyphicon-glass">glyphicon-glass</option>
+              <option data-icon="glyphicon-cog" value="glyphicon-cog" title="glyphicon-cog">glyphicon-cog</option>
+              <option data-icon="glyphicon-list-alt" value="glyphicon-list-alt" title="glyphicon-list-alt">glyphicon-list-alt</option>
+              <option data-icon="glyphicon-lock" value="glyphicon-lock" title="glyphicon-lock">glyphicon-lock</option>
+              <option data-icon="glyphicon-tag" value="glyphicon-tag" title="glyphicon-tag">glyphicon-tag</option>
+          </select>
+        </div>
+
+          <div class="help-block with-errors"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary submit" >Submit</button>
+      </div>
+    </form>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+
+<script>
+  var API_URL = 'http://' + location.host + '/a_user/a_menus_data/';
+
+  function queryParams(params) {
+    var query_data = {};
+    var filter = $('.form-inline');
+    filter.find(".form-control[name]").each(function() {
+      query_data[$(this).attr('name')] = $(this).val();
+    })
+    return query_data;
+  }
+
+  function actionFormatter(value) {
+    return [
+      '<button class="update btn btn-default" href="javascript:" title="Update Item">编辑</button>',
+      '<button class="operate1 btn btn-default" href="javascript:" title="Delete Item">恢复</button>',
+      '<button class="operate2 btn btn-default" href="javascript:" title="Delete Item">停用</button>',
+    ].join('');
+  }
+
+  // update and delete events
+  window.actionEvents = {
+    'click .update': function(e, value, row) {
+      showModal($(this).attr('title'), row);
+    },
+    'click .operate1': function(e, value, row) {
+      ajax_get(API_URL.substring(0, API_URL.length - 1 - "a_menus_data".length) + 'a_menu_open/' + row.id)
+    },
+    'click .operate2': function(e, value, row) {
+      ajax_get(API_URL.substring(0, API_URL.length - 1 - "a_menus_data".length) + 'a_menu_shut/' + row.id)
+    }
+  };
+
+
+  function showAlert(title, type) {
+    $alert = $(".alert");
+    $alert.attr('class', 'alert alert-' + type || 'success')
+      .html('<i class="glyphicon glyphicon-check"></i> ' + title).show();
+    setTimeout(function() {
+      $alert.hide();
+    }, 3000);
+  }
+
+  function rowStyle(row, index) {
+    var classes = ['active', 'success', 'info', 'warning', 'danger', 'table_normal'];
+
+    return {
+      classes: classes[2]
+    };
+  }
+
+$.ready(function(){
+    refresh_table();
+  })
+
+</script>
+
+<script src="{% static 'js/table_common.js' %}"></script>
+
+<script>
+
+
+$(function() {
+  // create event
+  $('.create').click(function() {
+    showModal($(this).text());
+  });
+  $modal_menu = $('#modal_menu'),
+
+  $modal_menu.validator().on('submit', function(e) {
+    if ($modal_menu.data('bs.validator').hasErrors()) {
+      e.preventDefault();
+    } else {
+      e.preventDefault();
+      var row = {};
+
+      $modal_menu.find('input[type!="radio"][type!="checkbox"][name]').each(function() {
+        row[$(this).attr('name')] = $(this).val();
+      });
+
+      $modal_menu.find('select[name] :selected').each(function() {
+        row[$(this).parent("select").attr('name')] = $(this).val();
+      });
+
+      $modal_menu.find('input[type="radio"][name][title]:checked').each(function() {
+        row[$(this).attr('name')] = $(this).val();
+      });
+
+      $modal_menu.find('input[type="checkbox"]:checked').each(function(){
+        if(!row[$(this).attr('name')]){
+          row[$(this).attr('name')] = [];
+        }
+
+        row[$(this).attr('name')].push($(this).val());
+       });
+
+      $.ajax({
+        url: API_URL + ($modal_menu.data('id') || ''),
+        type: $modal_menu.data('id') ? 'put' : 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(row),
+        success: function(data) {
+          $modal_menu.modal('hide');
+          refresh_table();
+          if (data.status == 0) {
+            showAlert(data.message, 'success');
+          } else {
+            showAlert(data.message, 'danger');
+          }
+        },
+        error: function() {
+          showAlert(($modal_menu.data('id') ? 'Update' : 'Create') + ' item error!', 'danger');
+        }
+      });
+    }
+  });
+});
+
+function showModal(title, row) {
+  row = row || {
+    id: 0
+  }; // default row value
+
+  $modal_menu.data('id', row.id);
+  $modal_menu.find('.modal-title').text(title);
+  $modal_menu.find('input[type!="radio"]').val('');
+
+  for (var name in row) {
+    if(name.startWith('_')){
+      continue;
+    }
+    $modal_menu.find('input[type!="radio"][name="' + name + '"]').val(row[name]);
+    $modal_menu.find('select[name="' + name + '"] option[title="' + row[name] + '"]').attr("selected", true);
+    $modal_menu.find('input[type="radio"][name="' + name + '"][title=\'' + row[name] + '\']').attr("checked", true);
+    if(name == 'icon'){
+      $modal_menu.find('.bootstrap-select button .filter-option').text(row[name] ? row[name] : 'no icon')
+    }
+  }
+
+  $modal_menu.modal('show');
+}
+
+
+</script>
+
+<script type="text/javascript">
+
+</script>
+
+{% endblock main %}

@@ -78,7 +78,7 @@ def channel_set(request, param):
         except Exception as e:
             print(traceback.format_exc())
             return JsonResponse({"status": 1, "message":"参数错误"})
-        a_channel_set = A_channel_set.at(id).getone()
+        a_channel_set = A_channel_set.where(id=id).select().execute.one()
         a_channel_set = utils.model_set(a_channel_set, par)
         try:
             a_channel_set.save()

@@ -15,4 +15,8 @@ urlpatterns = [
     url(r'^a_user_list/(\d+)?$', views.user_list),
     url(r'^a_user_list_index/', views.user_list_index),
     url(r'^a_menus/(\d+)?$', views.menus),
+    url(r'^a_menus_index/?$', views.menus_index),
+    url(r'^a_menus_data/(\d+)?$', views.menus_data),
+    url(r'^a_menu_open/(\d+)?$', views.menu_open),
+    url(r'^a_menu_shut/(\d+)?$', views.menu_shut),
 ]

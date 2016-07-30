@@ -30,9 +30,6 @@
     display: inline-block;
   }
 
-  .bootstrap-select {
-    width: 20%!important;
-  }
 </style>
 
 {% endblock head %} {% block main %}
@@ -247,7 +244,6 @@ function showModal(title, row) {
               var snippet = '<div class="form-group">';
               var name = data[key]['name'];
               snippet += '<label>' + name + '</label><span>&nbsp;</span>'
-              snippet += get_icon()
               snippet +=  '<span>&nbsp;</span>';
               for (var key1 in data[key]['sub']) {
                 snippet += '<label class="checkbox-inline">\
@@ -278,18 +274,6 @@ function showModal(title, row) {
         }
     });
   $modal_permission.modal('show');
-}
-
-function get_icon(ii) {
-  return '<select class="selectpicker" name="" >\
-          <option data-icon="glyphicon-heart">Ketchup</option>\
-          <option data-icon="glyphicon-heart">Ketchup</option>\
-          <option data-icon="glyphicon-heart">Ketchup</option>\
-          <option data-icon="glyphicon-heart">Ketchup</option>\
-          <option data-icon="glyphicon-heart">Ketchup</option>\
-          <option data-icon="glyphicon-heart">Ketchup</option>\
-          <option data-icon="glyphicon-heart">Ketchup</option>\
-        </select>'
 }
 
 </script>
