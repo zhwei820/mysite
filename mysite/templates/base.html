@@ -142,7 +142,7 @@
         <ul class="sidebar-menu">
           {% for menu in user.extra.get_menu %}
             <li class="treeview">
-              <a href="#"><i class="fa {{ menu.icon }}"></i> <span>{{ menu.name }}</span> <i class="glyphicon fa-angle-left pull-right"></i></a>
+              <a href="#"><i class="glyphicon {{ menu.icon }}"></i> <span>{{ menu.name }}</span> <i class="glyphicon fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
                   {% for v in menu.sub %}
                     <li><a href="{{ v.url }}">{{ v.name }}</a></li>
