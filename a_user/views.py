@@ -155,7 +155,7 @@ def update_user(request):
             logger_error.error(e)
             return JsonResponse(RESULT_404)
 
-keys = ['permission_1', 'permission_2', 'permission_3', 'permission_4', 'permission_20']
+permission_keys = ['permission_1', 'permission_2', 'permission_3', 'permission_4', 'permission_20']
 
 @login_required
 def user_list(request, param):
@@ -182,7 +182,7 @@ def user_list(request, param):
     elif request.method == "PUT":
         user_id = int(param)
         try:
-            par = utils.get_post_parameter(request, keys)
+            par = utils.get_post_parameter(request, permission_keys)
             par = dict(filter(lambda x: x[1], par.items()))
         except Exception as e:
             print(traceback.format_exc())
@@ -202,7 +202,7 @@ def user_list(request, param):
 
 def get_permission_str(menus, par):
     permission = {"menu": []}
-    for key in keys:
+    for key in permission_keys:
         if key not in par.keys():
             continue
         item = par[key]
