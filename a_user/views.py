@@ -183,6 +183,7 @@ def user_list(request, param):
         user_id = int(param)
         try:
             par = utils.get_post_parameter(request, keys)
+            par = dict(filter(lambda x: x[1], par.items()))
         except Exception as e:
             print(traceback.format_exc())
             return JsonResponse({"status": 1, "message":"参数错误"})
@@ -201,7 +202,7 @@ def user_list(request, param):
 
 def get_permission_str(menus, par):
     permission = {"menu": []}
-    for key in keys:
+    for key in par.keys():
         item = par[key]
         parent_id = key.split('_')[1]
         menu_group = {"name": menus[parent_id]['name'], "icon": menus[parent_id]['icon'], "sub": [], "id": parent_id}
