@@ -202,7 +202,9 @@ def user_list(request, param):
 
 def get_permission_str(menus, par):
     permission = {"menu": []}
-    for key in par.keys():
+    for key in keys:
+        if key not in par.keys():
+            continue
         item = par[key]
         parent_id = key.split('_')[1]
         menu_group = {"name": menus[parent_id]['name'], "icon": menus[parent_id]['icon'], "sub": [], "id": parent_id}
