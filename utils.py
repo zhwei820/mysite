@@ -23,23 +23,24 @@ from datetime import date
 from config import global_conf
 from config.global_conf import PAGE_CAPACITY
 from a_user.model.Menu import Menu
+from django.conf import settings
 
 from mysite.lib.mysql_manager_rw import mmysql_rw
 
 def check_permission(user_extra, action):
     menu = Menu.where(action=action).select().execute().one()
-    # try:
-    permission = json.loads(user_extra.permission_str)
-    # print(permission)
-    # print(menu)
-    for item in permission['menu']:
-        if str(item['id']) == str(menu['parent_id']):
-            for v in item['sub']:
-                if str(v['id']) == str(menu['id']):
-                    return True
-    return False
-    # except Exception as e:
-    #     return False
+    try:
+        permission = json.loads(user_extra.permission_str)
+        # print(permission)
+        # print(menu)
+        for item in permission['menu']:
+            if str(item['id']) == str(menu['parent_id']):
+                for v in item['sub']:
+                    if str(v['id']) == str(menu['id']):
+                        return True
+        return False
+    except Exception as e:
+        return False
 
 def get_user_role(user_id):
     m = mmysql_rw()
@@ -130,6 +131,34 @@ def model_set(model, par):
         return model
     except Exception as e:
         raise
+
+def upload_file(request, sub_dir):
+    file_obj = request.GET("file")
+    print(file_obj)
+    print(dict(request.FILES))
+    '''''文件上传函数'''
+    if file_obj:
+        m = hashlib.md5()
+        m.update(file_obj)
+        raw_filename = file_obj.name.split('.')
+        if len(raw_filename) <= 2 or not sub_dir:
+            return (False, '')
+        if not sub_dir.endwith('/'):
+            sub_dir = sub_dir + '/'
+        if not sub_dir.startWith('/'):
+            sub_dir = '/' + sub_dir
+        path = os.path.join(settings.MEDIA_ROOT, sub_dir)
+        isExists = os.path.exists(path)
+        if not isExists:
+            os.makedirs(path)
+        file_name = m.hexdigest() + '.' + raw_filename[len(raw_filename) - 1]
+        path_file = os.path.join(path, file_name)
+        fp = open(path_file, 'wb')
+        for content in file.chunks():
+            fp.write(content)
+        fp.close()
+        return (True, settings.CDN_URL + sub_dir + file_name) #change
+    return (False, '')   #change
 
 if __name__ == '__main__':
     data = [

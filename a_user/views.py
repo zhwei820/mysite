@@ -155,10 +155,10 @@ def update_user(request):
             logger_error.error(e)
             return JsonResponse(RESULT_404)
 
-permission_keys = ['permission_1', 'permission_2', 'permission_3', 'permission_4', 'permission_20']
 
 @login_required
 def user_list(request, param):
+    permission_keys = ['permission_1', 'permission_2', 'permission_3', 'permission_4', 'permission_20']
     if not utils.check_permission(request.user.extra, 'a_user_list_index'):
         return JsonResponse(NO_PERMISSION)
     if request.method == 'GET':
@@ -193,7 +193,7 @@ def user_list(request, param):
         menus = {}
         for item in res:
             menus[str(item['id'])] = item
-        permission_str = get_permission_str(menus, par);
+        permission_str = get_permission_str(menus, par, permission_keys);
         user_extra = UserExtra.where(user_id=user_id).select().execute().one()
         user_extra.permission_str = permission_str
         try:
@@ -202,7 +202,7 @@ def user_list(request, param):
             return JsonResponse({"status": 1, "message":"编辑失败"})
         return JsonResponse({"status": 0, "message":"编辑成功"})
 
-def get_permission_str(menus, par):
+def get_permission_str(menus, par, permission_keys):
     permission = {"menu": []}
     for key in permission_keys:
         if key not in par.keys():
@@ -271,6 +271,7 @@ def get_parent_menus():
 
 @login_required
 def menus_data(request, id):
+    menus_keys = ['type', 'action', 'name', 'parent_id', 'icon',]
     id = int(id) if id else 0
     if not utils.check_permission(request.user.extra, 'a_user_list_index'):
         return JsonResponse(NO_PERMISSION)
@@ -282,7 +283,6 @@ def menus_data(request, id):
         menus = utils.prepare_table_data(menus, option)
         return JsonResponse(menus, safe = False)
     elif request.method == "PUT":
-        menus_keys = ['type', 'action', 'name', 'parent_id', 'icon',]
         try:
             par = utils.get_post_parameter(request, menus_keys)
         except Exception as e:
@@ -296,6 +296,21 @@ def menus_data(request, id):
             print(traceback.format_exc())
             return JsonResponse({"status": 1, "message":"编辑失败"})
         return JsonResponse({"status": 0, "message":"编辑成功"})
+    elif request.method == "POST":
+        try:
+            par = utils.get_post_parameter(request, menus_keys)
+        except Exception as e:
+            print(traceback.format_exc())
+            return JsonResponse({"status": 1, "message":"参数错误"})
+        a_menu = Menu()
+        a_menu.status = 1
+        a_menu = utils.model_set(a_menu, par)
+        try:
+            a_menu.save()
+        except Exception as e:
+            print(traceback.format_exc())
+            return JsonResponse({"status": 1, "message":"新增失败"})
+        return JsonResponse({"status": 0, "message":"新增成功"})
 
 @login_required
 def menu_open(request, id):

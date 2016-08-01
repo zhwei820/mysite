@@ -32,7 +32,6 @@ DATABASES = {
 }
 
 
-
 AUTHENTICATION_BACKENDS = ('mysite.backends.EmailCheckModelBackend',)
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -51,6 +50,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'mysite',
     'a_user',
+    'operation',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -125,3 +125,5 @@ ALLOWED_SIGNUP_DOMAINS = ['*']
 
 FILE_UPLOAD_TEMP_DIR = '/tmp/'
 FILE_UPLOAD_PERMISSIONS = 644
+
+CDN_URL = config('CDN_URL', default=False)

@@ -19,11 +19,9 @@ from django.contrib.auth.models import User, Group
 from DjangoCaptcha import Captcha
 from skylark import Database, Model, Field
 from mydecorators import login_required
-from mysite.lib.mysql_manager_rw import mmysql_rw
 from config.global_conf import USER_TYPE, RESULT_404, NO_PERMISSION
 from config import global_conf
 from .model.Channelset import A_channel_set
-
 
 from django.views.decorators.csrf import csrf_exempt
 

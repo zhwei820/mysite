@@ -20,6 +20,7 @@ from django.contrib import admin
 from django.conf.urls.static import static
 from django.conf import settings
 from a_user import urls as a_users_urls
+from operation import urls as operation_urls
 from mysite import views
 import sys
 import imp
@@ -29,6 +30,7 @@ imp.reload(sys)
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^a_user/', include(a_users_urls)),
+    url(r'^operation/', include(operation_urls)),
     url(r'^home/', views.home, name='home'),
     url(r'^channel/', views.channel, name='channel'),
     url(r'^channel_set/(\d+)?$', views.channel_set, name='channel_set'),
