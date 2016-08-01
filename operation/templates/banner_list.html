@@ -324,6 +324,10 @@ function showModal(title, row) {
     $modal_banner.find('select[name="' + name + '"] option[title="' + row[name] + '"]').attr("selected", true);
     $modal_banner.find('input[type="radio"][name="' + name + '"][title="' + row[name] + '"]').attr("checked", true);
   }
+  removeAllImage("img_wrapper1");
+  if(row.id > 0 || row.pro_id > 0){
+      addImage("img_wrapper1", row['pic_url']);
+    }
 
   $modal_banner.modal('show');
 }
