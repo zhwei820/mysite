@@ -9,6 +9,7 @@
 
 <script src="{% static 'bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}"></script>
 <script src="{% static 'bootstrap/js/bootstrap-validator.js' %}"></script>
+<script src="{% static 'js/jquery.ajaxfileupload.js' %}"></script>
 
 <style>
   .update {
@@ -52,7 +53,7 @@
       <th data-sortable="true" data-field="id">id</th>
       <th data-sortable="true" data-field="name">标题</th>
       <th data-sortable="true" data-field="description">描述</th>
-      <th data-sortable="true" data-field="os_type">系统</th>
+      <th data-sortable="true" data-field="_os_type">系统</th>
       <th data-sortable="true" data-field="_pic_url">图片</th>
       <th data-sortable="true" data-field="click_url">点击链接</th>
       <th data-sortable="true" data-field="ctime">创建时间</th>
@@ -62,8 +63,8 @@
       <th data-sortable="true" data-field="seq">排序</th>
       <th data-sortable="true" data-field="_status">状态</th>
       <th data-sortable="true" data-field="channel">渠道</th>
-      <th data-sortable="true" data-field="channel_type">渠道类型</th>
-      <th data-sortable="true" data-field="open_type">打开方式</th>
+      <th data-sortable="true" data-field="_channel_type">渠道类型</th>
+      <th data-sortable="true" data-field="_open_type">打开方式</th>
 
     </tr>
   </thead>
@@ -98,8 +99,13 @@
           </div>
 
           <div class="form-group">
-            <label for="">图片</label>
-            <input type="text" name="pick_url" id="pick_url" class="form-control">
+              <label>图片：</label>
+
+              <div class="photo-container photo-container-single">
+                  <div class="img_wrapper1">
+                  </div>
+                  <div onclick="image_input1.click()" class="photo-upload"></div>
+              </div>
           </div>
           <div class="form-group">
             <label for="">点击链接</label>
@@ -164,6 +170,7 @@
           </div>
 
           <div class="help-block with-errors"></div>
+
       </div>
 
       <div class="modal-footer">
@@ -171,6 +178,9 @@
         <button type="submit" class="btn btn-primary submit" >Submit</button>
       </div>
     </form>
+
+    <input type="file" class="hidden" name="file" id="image_input1" required accept="image/*">
+
     <!-- /.modal-content -->
   </div>
   <!-- /.modal-dialog -->
@@ -318,6 +328,42 @@ function showModal(title, row) {
   $modal_banner.modal('show');
 }
 
+
+$().ready(function() {
+    $("#image_input1").AjaxFileUpload({
+        action: API_URL.substring(0, API_URL.length - 1 - "banner_list".length) + "upload_file/",
+        onComplete: function(filename, response) {
+            if (response.status == 1) {
+                showAlert(response.message, 'error');
+            } else if (response.status == 0) {
+                console.log(response);
+                if($("#img_wrapper1_0").length == 0)
+                {
+                    addImage("img_wrapper1", response.url)
+                }
+                else {
+                    showAlert("图片数量限制为1张", 'error');
+                }
+            }
+        }
+    });
+})
+
+
+function addImage(container, img_url) {
+    var num = $("." + container).find(".photo_pos").length;
+    $("." + container).append('<div class="photo_pos" id="' + container + '_' + num + '" >' +
+        '<img width=60 src="' + img_url + '" alt=""> <i onclick="removeImage(\'' + container + '_' + num + '\')">x</i>' +
+        '<input type="text" name="' + container + '" value="' + img_url + '" disabled/>' +
+        '</div>');
+}
+
+function removeImage(container_id) {
+    $("#" + container_id).remove();
+}
+function removeAllImage(container_id) {
+    $("." + container_id).empty();
+}
 
 </script>
 

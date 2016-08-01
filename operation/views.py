@@ -14,6 +14,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User, Group
 from config.global_conf import USER_TYPE, RESULT_404, NO_PERMISSION
 from DjangoCaptcha import Captcha
+import json
+from django.http import HttpResponse
 import utils
 import logging
 import random
@@ -39,7 +41,7 @@ def banner_list_index(request):
 
 @login_required
 def banner_list(request, param):
-    banner_keys = ['name', 'description', 'os_type', 'pic_url', 'click_url', 'start_time', 'end_time', 'channel', 'channel_type', 'open_type']
+    banner_keys = ['name', 'description', 'os_type', 'pic_url', 'click_url', 'start_time', 'end_time', 'channel', 'channel_type', 'open_type', 'img_wrapper1']
     if not utils.check_permission(request.user.extra, 'banner_list_index'):
         return JsonResponse(NO_PERMISSION)
     if request.method == 'GET':
@@ -48,8 +50,11 @@ def banner_list(request, param):
             query_filter['channel'] = request.GET.get('channel', '')
             banners = Banner.get_list(query_filter)
             option = {'status': global_conf.public_status,
+                      'os_type': global_conf.os_type_option,
+                      'channel_type': global_conf.channel_type_option,
+                      'open_type': global_conf.open_type_option,
                       }
-            banners = utils.prepare_table_data(banners, option)
+            banners = utils.prepare_table_data(banners, option, ['pic_url'])
             return JsonResponse(banners, safe = False)
         except Exception as e:
 #            logger_error.error(e)
@@ -59,6 +64,8 @@ def banner_list(request, param):
         id = int(param)
         try:
             par = utils.get_post_parameter(request, banner_keys)
+            par['pic_url'] = par['img_wrapper1']
+            del par['img_wrapper1']
         except Exception as e:
             print(traceback.format_exc())
             return JsonResponse({"status": 1, "message":"参数错误"})
@@ -74,6 +81,8 @@ def banner_list(request, param):
     elif request.method == "POST":
         try:
             par = utils.get_post_parameter(request, banner_keys)
+            par['pic_url'] = par['img_wrapper1']
+            del par['img_wrapper1']
         except Exception as e:
             print(traceback.format_exc())
             return JsonResponse({"status": 1, "message":"参数错误"})
@@ -89,12 +98,15 @@ def banner_list(request, param):
             return JsonResponse({"status": 1, "message":"新增失败"})
         return JsonResponse({"status": 0, "message":"新增成功"})
 
-# @login_required
+@login_required
 @csrf_exempt
 def upload_file(request):
     # if not utils.check_permission(request.user.extra, 'banner_list_index'):
     #     return JsonResponse(NO_PERMISSION)
     if request.method == "POST":
-        img_url = utils.upload_file(request, 'banner')
-        print(img_url)
-    return JsonResponse({"status": 0, "message":"新增成功"})
+        is_ok, img_url = utils.upload_file(request, 'banner')
+        if is_ok:
+            return JsonResponse({"status": 0, "message":"", "url": img_url}, safe = False)
+            # return HttpResponse(json.dumps({"status": 0, "message":"", "url": img_url}), content_type="application/json")
+        else:
+            return JsonResponse({"status": 1, "message":"上传失败"})

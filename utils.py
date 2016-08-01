@@ -101,7 +101,7 @@ def cut_long_data(table_data):  # for display in table
         print(traceback.format_exc())
         return ''
 
-def prepare_table_data(table_data, option):  # prepare table data
+def prepare_table_data(table_data, option, img_keys):  # prepare table data
     try:
         table_data_c = copy.deepcopy(table_data)
         for jj in range(0, len(table_data_c)):
@@ -109,6 +109,12 @@ def prepare_table_data(table_data, option):  # prepare table data
                 for v, k in option.items():
                     if key == v:
                         table_data[jj]['_' + key] = option[key].get(str(table_data[jj][key]), table_data[jj][key])
+                for v in img_keys:
+                    if key == v:
+                        imgs = table_data[jj][key].split(',')
+                        table_data[jj]['_' + key] = ''
+                        for img in imgs:
+                            table_data[jj]['_' + key] += '<img src="%s" width="100"></img>' % (img)
         return cut_long_data(table_data)
     except Exception as e:
         print(traceback.format_exc())
@@ -133,28 +139,25 @@ def model_set(model, par):
         raise
 
 def upload_file(request, sub_dir):
-    file_obj = request.GET("file")
-    print(file_obj)
-    print(dict(request.FILES))
+    file_obj = request.FILES.get("file")
     '''''文件上传函数'''
     if file_obj:
         m = hashlib.md5()
-        m.update(file_obj)
+        m.update(file_obj.read())
         raw_filename = file_obj.name.split('.')
-        if len(raw_filename) <= 2 or not sub_dir:
+        if len(raw_filename) < 2 or not sub_dir:
             return (False, '')
-        if not sub_dir.endwith('/'):
+        if not sub_dir.endswith('/'):
             sub_dir = sub_dir + '/'
-        if not sub_dir.startWith('/'):
-            sub_dir = '/' + sub_dir
         path = os.path.join(settings.MEDIA_ROOT, sub_dir)
+        print(settings.MEDIA_ROOT)
         isExists = os.path.exists(path)
         if not isExists:
             os.makedirs(path)
         file_name = m.hexdigest() + '.' + raw_filename[len(raw_filename) - 1]
         path_file = os.path.join(path, file_name)
         fp = open(path_file, 'wb')
-        for content in file.chunks():
+        for content in file_obj.chunks():
             fp.write(content)
         fp.close()
         return (True, settings.CDN_URL + sub_dir + file_name) #change
