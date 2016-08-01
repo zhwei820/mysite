@@ -163,7 +163,9 @@ def user_list(request, param):
         return JsonResponse(NO_PERMISSION)
     if request.method == 'GET':
         try:
-            users = User.objects.all()
+            query_filter = {}
+            query_filter['email'] = request.GET.get('email', '')
+            users = User.objects.filter(email__contains=query_filter['email'])
             user_list = utils.objects_to_dict(list(users))
             for ii in range(len(user_list)):
                 user_list[ii]['extra'] = utils.objects_to_dict(users[ii].extra)
