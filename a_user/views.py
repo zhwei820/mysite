@@ -288,6 +288,7 @@ def menus_data(request, id):
         try:
             a_menu.save()
         except Exception as e:
+            print(traceback.format_exc())
             return JsonResponse({"status": 1, "message":"编辑失败"})
         return JsonResponse({"status": 0, "message":"编辑成功"})
 

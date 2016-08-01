@@ -84,7 +84,7 @@
         <div class="form-group">
           <label>父菜单</label>
           <select class="form-control" name="parent_id" >
-            <option value="" title="">一级菜单</option>
+            <option value="0" title="">一级菜单</option>
 
             {% for id, name in parent_menus.items %}
               <option value="{{ id }}" title="{{ id }}">{{ name }}</option>

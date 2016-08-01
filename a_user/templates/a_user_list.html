@@ -7,9 +7,6 @@
 
 <link rel="stylesheet" href="{% static 'bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css' %}">
 
-<link rel="stylesheet" href="{% static 'bootstrap-select/css/bootstrap-select.min.css' %}">
-<script src="{% static 'bootstrap-select/js/bootstrap-select.min.js' %}"></script>
-
 <script src="{% static 'bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}"></script>
 <script src="{% static 'bootstrap/js/bootstrap-validator.js' %}"></script>
 
@@ -77,6 +74,12 @@
       <div class="modal-body">
 
           <div id="permission">
+
+          </div>
+          <div class="form-group">
+            <label for="">全选</label>
+            <span>&nbsp;</span>
+            <input type="checkbox" name="all_check" value="all_check" id="all_check">
 
           </div>
 
@@ -265,8 +268,20 @@ function showModal(title, row) {
                 $("#permission_" +  menus[key]['sub'][key1]['id']).attr("checked", true);
               }
             }
-            $(function () {
-                $('select').selectpicker();
+            update_all_check()
+            $(function(){
+                $("input[type='checkbox']").change(function() {
+                    $modal_permission = $('#modal_permission');
+                    if($(this).val() == $("#all_check").val()){
+                      if($("#all_check:checked").val()){
+                        $modal_permission.find('input[type="checkbox"]').prop("checked", true);
+                      }else {
+                        $modal_permission.find('input[type="checkbox"]').prop("checked", false);
+                      }
+                    }else {
+                      update_all_check()
+                    }
+                });
             });
         },
         error: function() {
@@ -274,6 +289,31 @@ function showModal(title, row) {
         }
     });
   $modal_permission.modal('show');
+}
+
+function update_all_check() {
+  $modal_permission = $('#modal_permission');
+
+  var pflag = 0;
+  var qflag = 0;
+  var counter = 0;
+  $modal_permission.find('input[type="checkbox"][name!="all_check"]').each(function() {
+    if(!$(this).prop('checked')){
+      pflag += 1;
+    }else {
+      qflag += 1;
+    }
+    counter += 1;
+  });
+  if(pflag > 0 && pflag != counter){
+    $modal_permission.find('#all_check').prop("indeterminate", true);
+  }else if(counter == qflag) {
+    $modal_permission.find('#all_check').prop("indeterminate", false);
+    $modal_permission.find('#all_check').prop("checked", true);
+  }else if(counter == pflag) {
+    $modal_permission.find('#all_check').prop("indeterminate", false);
+    $modal_permission.find('#all_check').prop("checked", false);
+  }
 }
 
 </script>
