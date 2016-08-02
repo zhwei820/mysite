@@ -101,4 +101,4 @@ docs/_build/
 
 **/node_modules
 **/node_modules/*
-/script/pay/91atm/pay_91atm.conf
+/media/*
