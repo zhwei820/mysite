@@ -61,7 +61,7 @@
       <th data-sortable="true" data-field="start_time">上架时间</th>
       <th data-sortable="true" data-field="end_time">下架时间</th>
       <th data-sortable="true" data-field="seq">排序</th>
-      <th data-sortable="true" data-field="_status">状态</th>
+      <th data-sortable="true" data-field="__status">状态</th>
       <th data-sortable="true" data-field="channel">渠道</th>
       <th data-sortable="true" data-field="_channel_type">渠道类型</th>
       <th data-sortable="true" data-field="_open_type">打开方式</th>
@@ -213,9 +213,17 @@
     'click .update': function(e, value, row) {
       showModal($(this).attr('title'), row);
     },
-    'click .operate': function(e, value, row) {
-      $modal_detail = $("#modal_detail")
-      $modal_detail.modal('show');
+    'click .operate1': function(e, value, row) {
+      if($(this).hasClass("disabled")){
+          return;
+      }
+      ajax_get(API_URL.substring(0, API_URL.length - 1 - "banner_list".length) + 'banner_open/' + row.id)
+    },
+    'click .operate2': function(e, value, row) {
+      if($(this).hasClass("disabled")){
+          return;
+      }
+      ajax_get(API_URL.substring(0, API_URL.length - 1 - "banner_list".length) + 'banner_shut/' + row.id)
     }
   };
 
@@ -242,9 +250,24 @@
     };
   }
 
-$.ready(function(){
+$(document).ready(function(){
     refresh_table();
+    setInterval("refresh_buttons()", 300);
   })
+
+function refresh_buttons() {
+    $("tr").each(function() {
+        var that = this;
+        $(this).find('td').each(function() {
+            if (this.innerHTML.indexOf("有效") >= 0) {
+                $(that).find(".operate1").addClass('disabled');
+            }
+            if (this.innerHTML.indexOf("失效") >= 0) {
+                $(that).find(".operate2").addClass('disabled');
+            }
+        })
+    })
+}
 
 </script>
 
@@ -340,7 +363,6 @@ $().ready(function() {
             if (response.status == 1) {
                 showAlert(response.message, 'error');
             } else if (response.status == 0) {
-                console.log(response);
                 if($("#img_wrapper1_0").length == 0)
                 {
                     addImage("img_wrapper1", response.url)

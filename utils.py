@@ -101,7 +101,7 @@ def cut_long_data(table_data):  # for display in table
         print(traceback.format_exc())
         return ''
 
-def prepare_table_data(table_data, option, img_keys):  # prepare table data
+def prepare_table_data(table_data, option, img_keys=[]):  # prepare table data
     try:
         table_data_c = copy.deepcopy(table_data)
         for jj in range(0, len(table_data_c)):

@@ -20,6 +20,7 @@ import utils
 import logging
 import random
 import traceback
+import datetime
 import json
 import copy
 from mysite.lib.mysql_manager_rw import mmysql_rw
@@ -31,72 +32,6 @@ from django.views.decorators.csrf import csrf_exempt
 logger = logging.getLogger('mall_admin')
 logger_error = logging.getLogger('mall_admin_error')
 
-@login_required
-def banner_list_index(request):
-    if not utils.check_permission(request.user.extra, 'banner_list_index'):
-        return JsonResponse(NO_PERMISSION)
-    return render(request, 'banner_list.html', {"breadcrumb1" : "运营", "breadcrumb2" : "banner管理", "channel_type_option": global_conf.channel_type_option,
-                                                                                                      'os_type_option' : global_conf.os_type_option,
-                                                                                                      'open_type_option' : global_conf.open_type_option})
-
-@login_required
-def banner_list(request, param):
-    banner_keys = ['name', 'description', 'os_type', 'pic_url', 'click_url', 'start_time', 'end_time', 'channel', 'channel_type', 'open_type', 'img_wrapper1']
-    if not utils.check_permission(request.user.extra, 'banner_list_index'):
-        return JsonResponse(NO_PERMISSION)
-    if request.method == 'GET':
-        try:
-            query_filter = {}
-            query_filter['channel'] = request.GET.get('channel', '')
-            banners = Banner.get_list(query_filter)
-            option = {'status': global_conf.public_status,
-                      'os_type': global_conf.os_type_option,
-                      'channel_type': global_conf.channel_type_option,
-                      'open_type': global_conf.open_type_option,
-                      }
-            banners = utils.prepare_table_data(banners, option, ['pic_url'])
-            return JsonResponse(banners, safe = False)
-        except Exception as e:
-#            logger_error.error(e)
-            print(traceback.format_exc())
-            return JsonResponse(RESULT_404)
-    elif request.method == "PUT":
-        id = int(param)
-        try:
-            par = utils.get_post_parameter(request, banner_keys)
-            par['pic_url'] = par['img_wrapper1']
-            del par['img_wrapper1']
-        except Exception as e:
-            print(traceback.format_exc())
-            return JsonResponse({"status": 1, "message":"参数错误"})
-        banner = Banner.where(id=id).select().execute().one()
-        banner.seq = Banner.max(Banner.seq) if Banner.max(Banner.seq) else 0 + 1
-        banner = utils.model_set(banner, par)
-        try:
-            banner.save()
-        except Exception as e:
-            print(traceback.format_exc())
-            return JsonResponse({"status": 1, "message":"编辑失败"})
-        return JsonResponse({"status": 0, "message":"编辑成功"})
-    elif request.method == "POST":
-        try:
-            par = utils.get_post_parameter(request, banner_keys)
-            par['pic_url'] = par['img_wrapper1']
-            del par['img_wrapper1']
-        except Exception as e:
-            print(traceback.format_exc())
-            return JsonResponse({"status": 1, "message":"参数错误"})
-        banner = Banner()
-        banner.status = 1
-        banner.seq = Banner.max(Banner.seq) if Banner.max(Banner.seq) else 0 + 1
-        print(banner.seq)
-        banner = utils.model_set(banner, par)
-        try:
-            banner.save()
-        except Exception as e:
-            print(traceback.format_exc())
-            return JsonResponse({"status": 1, "message":"新增失败"})
-        return JsonResponse({"status": 0, "message":"新增成功"})
 
 @login_required
 @csrf_exempt
@@ -104,9 +39,8 @@ def upload_file(request):
     # if not utils.check_permission(request.user.extra, 'banner_list_index'):
     #     return JsonResponse(NO_PERMISSION)
     if request.method == "POST":
-        is_ok, img_url = utils.upload_file(request, 'banner')
+        is_ok, img_url = utils.upload_file(request, 'mysite')
         if is_ok:
             return JsonResponse({"status": 0, "message":"", "url": img_url}, safe = False)
-            # return HttpResponse(json.dumps({"status": 0, "message":"", "url": img_url}), content_type="application/json")
         else:
             return JsonResponse({"status": 1, "message":"上传失败"})

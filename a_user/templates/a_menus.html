@@ -159,9 +159,15 @@
       showModal($(this).attr('title'), row);
     },
     'click .operate1': function(e, value, row) {
+      if($(this).hasClass("disabled")){
+          return;
+      }
       ajax_get(API_URL.substring(0, API_URL.length - 1 - "a_menus_data".length) + 'a_menu_open/' + row.id)
     },
     'click .operate2': function(e, value, row) {
+      if($(this).hasClass("disabled")){
+          return;
+      }
       ajax_get(API_URL.substring(0, API_URL.length - 1 - "a_menus_data".length) + 'a_menu_shut/' + row.id)
     }
   };
