@@ -28,7 +28,7 @@ from django.conf import settings
 from mysite.lib.mysql_manager_rw import mmysql_rw
 
 def check_permission(user_extra, action):
-    menu = Menu.where(action=action).select().execute().one()
+    menu = Menu.where(status=1, action=action).select().execute().one()
     try:
         permission = json.loads(user_extra.permission_str)
         # print(permission)
@@ -48,7 +48,6 @@ def get_user_role(user_id):
     m.Q(sql)
     res = m.fetch_one()
     return res
-
 
 def md5_str(strs):
     try:

@@ -190,10 +190,25 @@
     };
   }
 
-$.ready(function(){
-    refresh_table();
-  })
 
+  $(document).ready(function(){
+      refresh_table();
+      setInterval("refresh_buttons()", 300);
+    })
+
+  function refresh_buttons() {
+      $("tr").each(function() {
+          var that = this;
+          $(this).find('td').each(function() {
+              if (this.innerHTML.indexOf("有效") >= 0) {
+                  $(that).find(".operate1").addClass('disabled');
+              }
+              if (this.innerHTML.indexOf("失效") >= 0) {
+                  $(that).find(".operate2").addClass('disabled');
+              }
+          })
+      })
+  }
 </script>
 
 <script src="{% static 'js/table_common.js' %}"></script>

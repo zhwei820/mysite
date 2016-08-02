@@ -43,6 +43,9 @@
     <label for="">email</label>
     <input type='text' class="form-control date_time_input" name="email" />
   </div>
+  <button type="button" class="btn btn-primary permission_update">
+    更新管理员权限
+  </button>
 </div>
 
 <table id="table" data-show-refresh="true" data-toolbar=".form-inline" data-sort-name="id" data-sort-order="desc" data-row-style="rowStyle" data-pagination="true" data-page-size="10" data-page-list="[10,20]" data-pagination-first-text="First" data-pagination-pre-text="Previous"
@@ -127,6 +130,18 @@
     'click .operate': function(e, value, row) {
       $modal_detail = $("#modal_detail")
       $modal_detail.modal('show');
+    },
+    'click .operate1': function(e, value, row) {
+      if($(this).hasClass("disabled")){
+          return;
+      }
+      ajax_get(API_URL.substring(0, API_URL.length - 1 - "a_user_list".length) + 'a_user_open/' + row.id)
+    },
+    'click .operate2': function(e, value, row) {
+      if($(this).hasClass("disabled")){
+          return;
+      }
+      ajax_get(API_URL.substring(0, API_URL.length - 1 - "a_user_list".length) + 'a_user_shut/' + row.id)
     }
   };
 
@@ -153,16 +168,33 @@
     };
   }
 
-$.ready(function(){
+$(document).ready(function(){
     refresh_table();
+    setInterval("refresh_buttons()", 300);
   })
 
+function refresh_buttons() {
+    $("tr").each(function() {
+        var that = this;
+        $(this).find('td').each(function() {
+            if (this.innerHTML.indexOf("有效") >= 0) {
+                $(that).find(".operate1").addClass('disabled');
+            }
+            if (this.innerHTML.indexOf("失效") >= 0) {
+                $(that).find(".operate2").addClass('disabled');
+            }
+        })
+    })
+}
 </script>
 
 <script src="{% static 'js/table_common.js' %}"></script>
 
 <script>
 
+addEvent(document.querySelector(".permission_update"), 'click', function(e) {
+  ajax_get(API_URL.substring(0, API_URL.length - 1 - "a_user_list".length) + 'a_user_permission_update/')
+});
 
 $(function() {
   // create event
@@ -228,6 +260,10 @@ function showModal(title, row) {
   $modal_permission.data('id', row.id);
   $modal_permission.find('.modal-title').text(title);
   for (var name in row) {
+    if(name.startWith('_')){
+      continue;
+    }
+
     $modal_permission.find('input[type!="radio"][name="' + name + '"]').val(row[name]);
     $modal_permission.find('select[name="' + name + '"] option[title="' + row[name] + '"]').attr("selected", true);
     $modal_permission.find('input[type="radio"][name="' + name + '"][title="' + row[name] + '"]').attr("checked", true);

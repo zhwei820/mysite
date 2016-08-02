@@ -23,6 +23,7 @@ import copy
 from mysite.lib.mysql_manager_rw import mmysql_rw
 from .model.UserExtra import UserExtra
 from .model.Menu import Menu
+from .model.AdminUser import AdminUser
 from config import global_conf
 
 
@@ -80,7 +81,7 @@ def user_logout(request):
         except Exception as e:
             return JsonResponse(RESULT_404)
 
-# @login_required
+@login_required
 def add_user(request):
     # 添加用户
     if request.method == 'POST':
@@ -133,7 +134,6 @@ def update_password(request):
         except Exception as e:
             return JsonResponse(RESULT_404)
 
-
 @login_required
 def update_user(request):
     if request.method == 'POST':
@@ -172,7 +172,7 @@ def user_list(request, param):
                 user_list[ii]['role'] = user_list[ii]['extra']['role']
             option = {'is_staff': global_conf.true_false,
                       'is_superuser': global_conf.true_false,
-                      'is_active': global_conf.true_false,
+                      'is_active': global_conf.true_false_status,
                       'role': global_conf.admin_role,
                       }
             user_list = utils.prepare_table_data(user_list, option)
@@ -233,12 +233,65 @@ def user_list_index(request):
     return render(request, 'a_user_list.html', {"breadcrumb1" : "设置", "breadcrumb2" : "管理员管理"})
 
 @login_required
+def user_open(request, id):
+    id = int(id) if id else 0
+    if not utils.check_permission(request.user.extra, 'a_user_list_index'):
+        return JsonResponse(NO_PERMISSION)
+    a_user = AdminUser.where(id=id).select().execute().one()
+    a_user.is_active = True
+    try:
+        a_user.save()
+    except Exception as e:
+        return JsonResponse({"status": 1, "message":"编辑失败"})
+    return JsonResponse({"status": 0, "message":"编辑成功"})
+
+@login_required
+def user_shut(request, id):
+    id = int(id) if id else 0
+    if not utils.check_permission(request.user.extra, 'a_user_list_index'):
+        return JsonResponse(NO_PERMISSION)
+    a_user = AdminUser.where(id=id).select().execute().one()
+    a_user.is_active = False
+    try:
+        a_user.save()
+    except Exception as e:
+        return JsonResponse({"status": 1, "message":"编辑失败"})
+    return JsonResponse({"status": 0, "message":"编辑成功"})
+
+@login_required
+def user_permission_update(request):
+    if not utils.check_permission(request.user.extra, 'a_user_list_index'):
+        return JsonResponse(NO_PERMISSION)
+    user_extras = UserExtra.where().select().execute().all()
+    try:
+        for user_extra in user_extras:
+            user_extra1 = UserExtra.where(id=user_extra['id']).select().execute().one()
+            user_extra1.permission_str = get_updated_permission_str(user_extra['permission_str'])
+            user_extra1.save()
+    except Exception as e:
+        return JsonResponse({"status": 1, "message":"编辑失败"})
+    return JsonResponse({"status": 0, "message":"编辑成功"})
+
+def get_updated_permission_str(permission_str):
+    try:
+        permission = json.loads(permission_str)
+        menu_actions = get_menu_actions()
+        for ii in range(len(permission['menu'])):
+            for jj in range(len(permission['menu'][ii]['sub'])):
+                if permission['menu'][ii]['sub'][jj]['name'] not in menu_actions:
+                    del permission['menu'][ii]['sub'][jj]
+        return json.dumps(permission)
+    except Exception as e:
+        raise
+        return None
+
+@login_required
 def menus(request, id):
     id = int(id) if id else 0
     if not utils.check_permission(request.user.extra, 'a_user_list_index'):
         return JsonResponse(NO_PERMISSION)
     if request.method == 'GET':
-        menus = Menu.where().select().execute().all()
+        menus = Menu.where(status=1).select().execute().all()
         menu_tree = {}
         for item in menus:
             if item['parent_id'] != 0:
@@ -258,7 +311,7 @@ def menus(request, id):
 
 @login_required
 def menus_index(request):
-    if not utils.check_permission(request.user.extra, 'a_user_list_index'):
+    if not utils.check_permission(request.user.extra, 'a_menus_index'):
         return JsonResponse(NO_PERMISSION)
     return render(request, 'a_menus.html', {"breadcrumb1" : "设置", "breadcrumb2" : "菜单管理", 'parent_menus': get_parent_menus()})
 
@@ -269,11 +322,19 @@ def get_parent_menus():
         a_parent_menus[str(item['id'])] = item['name']
     return a_parent_menus
 
+def get_menu_actions():
+    res = Menu.where(status=1).select().execute().all()
+    menu_actions = []
+    for item in res:
+        menu_actions.append(item['name'])
+    return menu_actions
+
+
 @login_required
 def menus_data(request, id):
     menus_keys = ['type', 'action', 'name', 'parent_id', 'icon',]
     id = int(id) if id else 0
-    if not utils.check_permission(request.user.extra, 'a_user_list_index'):
+    if not utils.check_permission(request.user.extra, 'a_menus_index'):
         return JsonResponse(NO_PERMISSION)
     if request.method == 'GET':
         menus = Menu.where().select().execute().all()
@@ -315,7 +376,7 @@ def menus_data(request, id):
 @login_required
 def menu_open(request, id):
     id = int(id) if id else 0
-    if not utils.check_permission(request.user.extra, 'a_user_list_index'):
+    if not utils.check_permission(request.user.extra, 'a_menus_index'):
         return JsonResponse(NO_PERMISSION)
     a_menu = Menu.where(id=id).select().execute().one()
     a_menu.status = 1
@@ -328,7 +389,7 @@ def menu_open(request, id):
 @login_required
 def menu_shut(request, id):
     id = int(id) if id else 0
-    if not utils.check_permission(request.user.extra, 'a_user_list_index'):
+    if not utils.check_permission(request.user.extra, 'a_menus_index'):
         return JsonResponse(NO_PERMISSION)
     a_menu = Menu.where(id=id).select().execute().one()
     a_menu.status = 0
