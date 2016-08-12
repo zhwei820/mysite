@@ -88,6 +88,16 @@ function refresh_table(){
   $('#table').bootstrapTable('refresh');
 }
 
+
+function queryParams(params) {
+  var query_data = {};
+  var filter = $('.form-inline');
+  filter.find(".form-control[name]").each(function() {
+    query_data[$(this).attr('name')] = $(this).val();
+  })
+  return query_data;
+}
+
 function ajax_get(url) {
     $.ajax({
       url: url,

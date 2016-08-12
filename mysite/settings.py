@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'mysite',
     'a_user',
     'operation',
+    'package',
 )
 
 MIDDLEWARE_CLASSES = (

@@ -33,7 +33,7 @@
 {% endblock head %} {% block main %}
 
 <ul class="nav nav-tabs">
-    <li role="presentation" class="active"><a href="/operation/banner_list_index/">banner管理</a></li>
+    <li role="presentation" class="active"><a href="/package/version_list_index/">version管理</a></li>
 
 </ul>
 <p class="bg-success alert">...</p>
@@ -51,26 +51,21 @@
       <th data-field="action" data-align="center" data-formatter="actionFormatter" data-events="actionEvents">操作</th>
 
       <th data-sortable="true" data-field="id">id</th>
-      <th data-sortable="true" data-field="name">标题</th>
-      <th data-sortable="true" data-field="description">描述</th>
-      <th data-sortable="true" data-field="_os_type">系统</th>
-      <th data-sortable="true" data-field="_pic_url">图片</th>
-      <th data-sortable="true" data-field="click_url">点击链接</th>
+      <th data-sortable="true" data-field="version">版本</th>
+      <th data-sortable="true" data-field="os_type">系统</th>
       <th data-sortable="true" data-field="ctime">创建时间</th>
-      <th data-sortable="true" data-field="utime">更新时间</th>
-      <th data-sortable="true" data-field="start_time">上架时间</th>
-      <th data-sortable="true" data-field="end_time">下架时间</th>
-      <th data-sortable="true" data-field="seq">排序</th>
-      <th data-sortable="true" data-field="__status">状态</th>
-      <th data-sortable="true" data-field="channel">渠道</th>
-      <th data-sortable="true" data-field="_channel_type">渠道类型</th>
-      <th data-sortable="true" data-field="_open_type">打开方式</th>
+      <th data-sortable="true" data-field="what_news">what_news</th>
+      <th data-sortable="true" data-field="_update_is_recommend">是否推荐更新</th>
+      <th data-sortable="true" data-field="_update_is_force">版本废弃</th>
+      <th data-sortable="true" data-field="dl_url">下载链接</th>
+      <th data-sortable="true" data-field="_status">状态</th>
+      <th data-sortable="true" data-field="rate">灰度比例</th>
 
     </tr>
   </thead>
 </table>
 
-<div id="modal_banner" class="modal fade" data-toggle="validator" role="form">
+<div id="modal_version" class="modal fade" data-toggle="validator" role="form">
   <div class="modal-dialog">
     <form class="modal-content">
       <div class="modal-header">
@@ -81,92 +76,55 @@
       <div class="modal-body">
 
           <div class="form-group">
-            <label for="">标题</label>
-            <input type="text" name="name" id="name" class="form-control">
-          </div>
-          <div class="form-group">
-            <label for="">描述</label>
-            <input type="text" name="description" id="description" class="form-control">
+            <label for="">版本</label>
+            <input type="text" name="version" id="version" class="form-control">
           </div>
           <div class="form-group">
             <label for="">系统</label>
             <select class="form-control" name="os_type">
-              {% for id, name in os_type_option.items %}
-                <option value="{{ id }}" title="{{ id }}">{{ name }}</option>
-              {% endfor %}
-
-            </select>
-          </div>
-
-          <div class="form-group">
-              <label>图片：</label>
-
-              <div class="photo-container photo-container-single">
-                  <div class="img_wrapper1">
-                  </div>
-                  <div onclick="image_input1.click()" class="photo-upload"></div>
-              </div>
-          </div>
-          <div class="form-group">
-            <label for="">点击链接</label>
-            <input type="text" name="click_url" id="click_url" class="form-control">
-          </div>
-
-          <div class="form-group">
-            <label for="">上架时间</label>
-            <div class='input-group date ' id='start_time'>
-              <input type='text' class="form-control " name="start_time"/>
-              <span class="input-group-addon">
-                <span class="glyphicon glyphicon-calendar"></span>
-              </span>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="">下架时间</label>
-            <div class='input-group date ' id='end_time'>
-              <input type='text' class="form-control " name="end_time" />
-              <span class="input-group-addon">
-                <span class="glyphicon glyphicon-calendar"></span>
-              </span>
-            </div>
-          </div>
-
-          <script type="text/javascript">
-          $(function() {
-            $('#start_time').datetimepicker({
-              format: "YYYY-MM-DD HH:mm",
-              defaultDate: (new Date()).setDate(new Date().getDate() - 25),
-            });
-            $('#end_time').datetimepicker({
-              format: "YYYY-MM-DD HH:mm",
-              defaultDate: (new Date()).setMinutes(new Date().getMinutes() + 5),
-
-            });
-          });
-          </script>
-
-
-          <div class="form-group">
-            <label for="">渠道</label>
-            <input type="text" name="channel" id="channel" class="form-control">
-          </div>
-
-          <div class="form-group">
-            <label for="">渠道方式</label>
-            <select class="form-control" name="channel_type">
-              {% for id, name in channel_type_option.items %}
+              {% for id, name in os_type.items %}
                 <option value="{{ id }}" title="{{ id }}">{{ name }}</option>
               {% endfor %}
             </select>
           </div>
+
           <div class="form-group">
-            <label for="">打开方式</label>
-            <select class="form-control" name="open_type">
-              {% for id, name in open_type_option.items %}
+            <label for="">下载链接</label>
+            <input type="text" name="dl_url" id="dl_url" class="form-control">
+          </div>
+
+
+          <div class="form-group">
+            <label for="">更新文案</label>
+            <textarea type="text" name="what_news" id="what_news" class="form-control"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="">是否推荐更新</label>
+            <select class="form-control" name="update_is_recommend">
+              {% for id, name in yes_no.items %}
                 <option value="{{ id }}" title="{{ id }}">{{ name }}</option>
               {% endfor %}
             </select>
+          </div>
+
+          <div class="form-group">
+            <label for="">版本废弃</label>
+            <select class="form-control" name="update_is_force">
+              {% for id, name in yes_no.items %}
+                <option value="{{ id }}" title="{{ id }}">{{ name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div id="permission">
+
+          </div>
+          <div class="form-group">
+            <label for="">全选</label>
+            <span>&nbsp;</span>
+            <input type="checkbox" name="all_check" value="all_check" id="all_check">
+
           </div>
 
           <div class="help-block with-errors"></div>
@@ -179,7 +137,6 @@
       </div>
     </form>
 
-    <input type="file" class="hidden" name="file" id="image_input1" required accept="image/*">
 
     <!-- /.modal-content -->
   </div>
@@ -189,8 +146,7 @@
 
 
 <script>
-  var API_URL = 'http://' + location.host + '/operation/banner_list/';
-
+  var API_URL = 'http://' + location.host + '/package/version_list/';
 
   function actionFormatter(value) {
     return [
@@ -209,13 +165,13 @@
       if($(this).hasClass("disabled")){
           return;
       }
-      ajax_get(API_URL.substring(0, API_URL.length - 1 - "banner_list".length) + 'banner_open/' + row.id)
+      ajax_get(API_URL.substring(0, API_URL.length - 1 - "version_list".length) + 'version_open/' + row.id)
     },
     'click .operate2': function(e, value, row) {
       if($(this).hasClass("disabled")){
           return;
       }
-      ajax_get(API_URL.substring(0, API_URL.length - 1 - "banner_list".length) + 'banner_shut/' + row.id)
+      ajax_get(API_URL.substring(0, API_URL.length - 1 - "version_list".length) + 'version_shut/' + row.id)
     }
   };
 
@@ -273,42 +229,45 @@ $(function() {
   $('.create').click(function() {
     showModal($(this).text());
   });
-  $modal_banner = $('#modal_banner'),
+  $modal_version = $('#modal_version'),
 
-  $modal_banner.validator().on('submit', function(e) {
-    if ($modal_banner.data('bs.validator').hasErrors()) {
+  $modal_version.validator().on('submit', function(e) {
+    if ($modal_version.data('bs.validator').hasErrors()) {
       e.preventDefault();
     } else {
       e.preventDefault();
       var row = {};
 
-      $modal_banner.find('input[type!="radio"][type!="checkbox"][name]').each(function() {
+      $modal_version.find('input[type!="radio"][type!="checkbox"][name]').each(function() {
         row[$(this).attr('name')] = $(this).val();
       });
 
-      $modal_banner.find('select[name] option[title]:selected').each(function() {
+      $modal_version.find('select[name] option[title]:selected').each(function() {
         row[$(this).parent("select").attr('name')] = $(this).val();
       });
 
-      $modal_banner.find('input[type="radio"][name][title]:checked').each(function() {
+      $modal_version.find('input[type="radio"][name][title]:checked').each(function() {
         row[$(this).attr('name')] = $(this).val();
       });
 
-      $modal_banner.find('input[type="checkbox"]:checked').each(function(){
+      $modal_version.find('textarea').each(function() {
+        row[$(this).attr('name')] = $(this).val();
+      });
+
+      $modal_version.find('input[type="checkbox"]:checked').each(function(){
         if(!row[$(this).attr('name')]){
           row[$(this).attr('name')] = [];
         }
-
         row[$(this).attr('name')].push($(this).val());
        });
 
       $.ajax({
-        url: API_URL + ($modal_banner.data('id') || ''),
-        type: $modal_banner.data('id') ? 'put' : 'post',
+        url: API_URL + ($modal_version.data('id') || ''),
+        type: $modal_version.data('id') ? 'put' : 'post',
         contentType: 'application/json',
         data: JSON.stringify(row),
         success: function(data) {
-          $modal_banner.modal('hide');
+          $modal_version.modal('hide');
           refresh_table();
           if (data.status == 0) {
             showAlert(data.message, 'success');
@@ -317,7 +276,7 @@ $(function() {
           }
         },
         error: function() {
-          showAlert(($modal_banner.data('id') ? 'Update' : 'Create') + ' item error!', 'danger');
+          showAlert(($modal_version.data('id') ? 'Update' : 'Create') + ' item error!', 'danger');
         }
       });
     }
@@ -329,58 +288,87 @@ function showModal(title, row) {
     id: 0
   }; // default row value
 
-  $modal_banner.data('id', row.id);
-  $modal_banner.find('.modal-title').text(title);
+  $modal_version.data('id', row.id);
+  $modal_version.find('.modal-title').text(title);
   for (var name in row) {
     if(name.startWith('_')){
       continue;
     }
-    $modal_banner.find('input[type!="radio"][name="' + name + '"]').val(row[name]);
-    $modal_banner.find('select[name="' + name + '"] option[title="' + row[name] + '"]').attr("selected", true);
-    $modal_banner.find('input[type="radio"][name="' + name + '"][title="' + row[name] + '"]').attr("checked", true);
-  }
-  removeAllImage("img_wrapper1");
-  if(row.id > 0 || row.pro_id > 0){
-      addImage("img_wrapper1", row['pic_url']);
+    if(name == 'rate'){
+      continue;
     }
 
-  $modal_banner.modal('show');
-}
+    $modal_version.find('input[type!="radio"][name="' + name + '"]').val(row[name]);
+    $modal_version.find('select[name="' + name + '"] option[title="' + row[name] + '"]').attr("selected", true);
+    $modal_version.find('input[type="radio"][name="' + name + '"][title="' + row[name] + '"]').attr("checked", true);
+    $modal_version.find('textarea[name="' + name + '"]').val(row[name]);
+  }
 
+  $('#permission').empty();
+  data = row.rate ? JSON.parse(row.rate) : []
+  _data = {}
+  for (var i = 0; i < data.length; i++) {
+    _data[data[i]] = data[i];
+  }
 
-$().ready(function() {
-    $("#image_input1").AjaxFileUpload({
-        action: API_URL.substring(0, API_URL.length - 1 - "banner_list".length) + "upload_file/",
-        onComplete: function(filename, response) {
-            if (response.status == 1) {
-                showAlert(response.message, 'error');
-            } else if (response.status == 0) {
-                if($("#img_wrapper1_0").length == 0)
-                {
-                    addImage("img_wrapper1", response.url)
-                }
-                else {
-                    showAlert("图片数量限制为1张", 'error');
-                }
+  var snippet = '<div class="form-group">';
+  snippet += '<label>' + '灰度' + '</label><span>&nbsp;</span>'
+  snippet +=  '<span>&nbsp;</span>';
+  for(var x=0;x<10;x++)
+  {
+      for(var y=0;y<10;y++)
+      {
+        snippet += '<label class="checkbox-inline">\
+            <input type="checkbox" " name="rate" value="' + x + '' + y + '" ' + (_data[x + '' + y ] ? 'checked' : '') + '> ' + x + '' + y + '\
+          </label>'
+      }
+  }
+  snippet += '</div>';
+  $('#permission').append(snippet);
+
+  update_all_check()
+  $(function(){
+      $("input[type='checkbox']").change(function() {
+          $modal_version = $('#modal_version');
+          if($(this).val() == $("#all_check").val()){
+            if($("#all_check:checked").val()){
+              $modal_version.find('input[type="checkbox"]').prop("checked", true);
+            }else {
+              $modal_version.find('input[type="checkbox"]').prop("checked", false);
             }
-        }
-    });
-})
+          }else {
+            update_all_check()
+          }
+      });
+  });
 
-
-function addImage(container, img_url) {
-    var num = $("." + container).find(".photo_pos").length;
-    $("." + container).append('<div class="photo_pos" id="' + container + '_' + num + '" >' +
-        '<img width=60 src="' + img_url + '" alt=""> <i onclick="removeImage(\'' + container + '_' + num + '\')">x</i>' +
-        '<input type="text" name="' + container + '" value="' + img_url + '" disabled/>' +
-        '</div>');
+  $modal_version.modal('show');
 }
 
-function removeImage(container_id) {
-    $("#" + container_id).remove();
-}
-function removeAllImage(container_id) {
-    $("." + container_id).empty();
+
+function update_all_check() {
+  $modal_version = $('#modal_version');
+
+  var pflag = 0;
+  var qflag = 0;
+  var counter = 0;
+  $modal_version.find('input[type="checkbox"][name!="all_check"]').each(function() {
+    if(!$(this).prop('checked')){
+      pflag += 1;
+    }else {
+      qflag += 1;
+    }
+    counter += 1;
+  });
+  if(pflag > 0 && pflag != counter){
+    $modal_version.find('#all_check').prop("indeterminate", true);
+  }else if(counter == qflag) {
+    $modal_version.find('#all_check').prop("indeterminate", false);
+    $modal_version.find('#all_check').prop("checked", true);
+  }else if(counter == pflag) {
+    $modal_version.find('#all_check').prop("indeterminate", false);
+    $modal_version.find('#all_check').prop("checked", false);
+  }
 }
 
 </script>

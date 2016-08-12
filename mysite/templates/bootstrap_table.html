@@ -205,15 +205,6 @@
 <script>
   var API_URL = 'http://' + location.host + '/channel_set/';
 
-  function queryParams(params) {
-    var query_data = {};
-    var filter = $('.form-inline');
-    filter.find(".form-control[name]").each(function() {
-      query_data[$(this).attr('name')] = $(this).val();
-    })
-    return query_data;
-  }
-
   function actionFormatter(value) {
     return [
       '<button class="update btn btn-default" href="javascript:" title="Update Item">编辑</button>',

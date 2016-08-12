@@ -81,6 +81,7 @@ def objects_to_dict(objects):
 def cut_long_data(table_data):  # for display in table
     try:
         unit_len = 20
+        table_data_c = copy.deepcopy(table_data)
         for jj in range(0, len(table_data)):
             for key, value in table_data[jj].items():
                 if isinstance(value, str):
@@ -91,11 +92,11 @@ def cut_long_data(table_data):  # for display in table
                         tmp_str += value[ii * unit_len : (ii + 1) * unit_len] + "\n"
                     ii += 1
                     tmp_str += value[ii * unit_len : ]
-                    table_data[jj][key] = tmp_str
+                    table_data_c[jj]['_' + key] = tmp_str
                 elif isinstance(value, datetime):
-                    table_data[jj][key] = str(value)
+                    table_data_c[jj]['_' + key] = str(value)
 
-        return table_data
+        return table_data_c
     except Exception as e:
         print(traceback.format_exc())
         return ''

@@ -109,7 +109,7 @@ channel_set_status = {
 message_os = {
     '0' : 'android/ios',
     '1' : 'android',
-    '2' : 'iOS',
+    '2' : 'ios',
 }
 message_status = {
     '0' : '待审核',
@@ -237,4 +237,9 @@ open_type_option= {
   'native' : '应用内打开',
   'webview' : 'webview',
   'browser' : '外部浏览器',
+}
+
+os_type = {
+    'android' : 'android',
+    'ios' : 'ios',
 }

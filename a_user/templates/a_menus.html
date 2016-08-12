@@ -136,15 +136,6 @@
 <script>
   var API_URL = 'http://' + location.host + '/a_user/a_menus_data/';
 
-  function queryParams(params) {
-    var query_data = {};
-    var filter = $('.form-inline');
-    filter.find(".form-control[name]").each(function() {
-      query_data[$(this).attr('name')] = $(this).val();
-    })
-    return query_data;
-  }
-
   function actionFormatter(value) {
     return [
       '<button class="update btn btn-default" href="javascript:" title="Update Item">编辑</button>',
