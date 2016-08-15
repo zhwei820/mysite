@@ -59,7 +59,7 @@
       <th data-sortable="true" data-field="_update_is_force">版本废弃</th>
       <th data-sortable="true" data-field="dl_url">下载链接</th>
       <th data-sortable="true" data-field="_status">状态</th>
-      <th data-sortable="true" data-field="rate">灰度比例</th>
+      <th data-sortable="true" data-field="_rate">灰度比例</th>
 
     </tr>
   </thead>
@@ -76,11 +76,11 @@
       <div class="modal-body">
 
           <div class="form-group">
-            <label for="">版本</label>
+            <label for="">版本 <span class="small">填写4位版本， 如 1.1.0.0</span> </label>
             <input type="text" name="version" id="version" class="form-control">
           </div>
           <div class="form-group">
-            <label for="">系统</label>
+            <label for="">系统  </label>
             <select class="form-control" name="os_type">
               {% for id, name in os_type.items %}
                 <option value="{{ id }}" title="{{ id }}">{{ name }}</option>
@@ -304,7 +304,13 @@ function showModal(title, row) {
     $modal_version.find('textarea[name="' + name + '"]').val(row[name]);
   }
 
+  var all_update_str = '{% autoescape off %}\
+                          {{ all_update }}\
+                        {% endautoescape %}';
+
   $('#permission').empty();
+  row.rate = row.rate == '[]' ? all_update_str : row.rate
+  console.log(row.rate);
   data = row.rate ? JSON.parse(row.rate) : []
   _data = {}
   for (var i = 0; i < data.length; i++) {

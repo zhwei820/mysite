@@ -32,11 +32,13 @@ def version_list_index(request):
     if not utils.check_permission(request.user.extra, 'version_list_index'):
         return JsonResponse(NO_PERMISSION)
     return render(request, 'version_list.html', {"breadcrumb1" : "打包", "breadcrumb2" : "version管理", "os_type": global_conf.os_type,
-                                                                                                      'yes_no' : global_conf.yes_no})
+                                                                                                      'yes_no' : global_conf.yes_no,
+                                                                                                      'all_update' : global_conf.all_update,
+                                                                                                      })
 
 @login_required
 def version_list(request, param):
-    version_keys = ['version', 'os_type', 'ctime', 'what_news', 'update_is_recommend', 'update_is_force', 'app_id', 'dl_url', 'channel', 'status', 'rate']
+    version_keys = ['version', 'os_type', 'what_news', 'update_is_recommend', 'update_is_force', 'app_id', 'dl_url', 'channel', 'status', 'rate']
     if not utils.check_permission(request.user.extra, 'version_list_index'):
         return JsonResponse(NO_PERMISSION)
     if request.method == 'GET':
@@ -48,6 +50,7 @@ def version_list(request, param):
                       'update_is_recommend': global_conf.yes_no,
                       'update_is_force': global_conf.yes_no,
                       'os_type': global_conf.os_type_option,
+                      'rate': global_conf.all_update_label,
                       }
             versions = utils.prepare_table_data(versions, option)
             return JsonResponse(versions, safe = False)
@@ -59,6 +62,7 @@ def version_list(request, param):
         try:
             par = utils.get_post_parameter(request, version_keys)
             par['rate'] = json.dumps(par['rate'])
+            par['rate'] = '[]' if global_conf.all_update == par['rate'] else par['rate']
         except Exception as e:
             print(traceback.format_exc())
             return JsonResponse({"status": 1, "message":"参数错误"})
@@ -74,6 +78,7 @@ def version_list(request, param):
         try:
             par = utils.get_post_parameter(request, version_keys)
             par['rate'] = json.dumps(par['rate'])
+            par['rate'] = '[]' if global_conf.all_update == par['rate'] else par['rate']
         except Exception as e:
             print(traceback.format_exc())
             return JsonResponse({"status": 1, "message":"参数错误"})
