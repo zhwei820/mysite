@@ -20,7 +20,6 @@ import random
 import traceback
 import json
 import copy
-from mysite.lib.mysql_manager_rw import mmysql_rw
 from .model.UserExtra import UserExtra
 from .model.Menu import Menu
 from .model.AdminUser import AdminUser

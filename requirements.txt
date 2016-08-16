@@ -6,3 +6,4 @@ Unipath
 python-decouple
 mysqlclient
 skylark
+xlwt

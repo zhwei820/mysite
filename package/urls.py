@@ -1,7 +1,7 @@
 #coding=utf-8
 
 from django.conf.urls import include, url
-from package import version_view, views
+from package import version_view
 
 urlpatterns = [
     url(r'^version_list_index/', version_view.version_list_index, name='version_list_index'),

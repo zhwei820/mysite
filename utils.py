@@ -25,6 +25,7 @@ from config.global_conf import PAGE_CAPACITY
 from a_user.model.Menu import Menu
 from django.conf import settings
 
+from third.export_excel import ExcelResponse
 from mysite.lib.mysql_manager_rw import mmysql_rw
 
 def check_permission(user_extra, action):
@@ -163,35 +164,20 @@ def upload_file(request, sub_dir):
         return (True, settings.CDN_URL + sub_dir + file_name) #change
     return (False, '')   #change
 
+
+def excelview(request, data=None, heders=None):
+    if not data:
+        data = [
+        [{u'姓名': 'Tom', u'年龄': 18, u'性别': u'男', u'身高': 175, u'体重': 67},
+         {u'姓名': 'Lily', u'年龄': 22, u'性别': u'女', u'身高': 163, u'体重': 41}],
+        [{u'姓名': 'Tom', u'身高': 175, u'体重': 67}],
+        [{u'姓名': 'Lily', u'身高': 163, u'体重': 41}]
+        ]
+        headers = [(u'姓名', u'年龄', u'性别', u'身高', u'体重'),
+                   (u'姓名', u'身高', u'体重'),
+                   (u'姓名', u'身高', u'体重')]
+        sheet_name=[u'总览', u'男生统计', u'女生统计']
+    return ExcelResponse(data, output_name=u'班级体检统计', headers=headers, is_template=False, sheet_name=sheet_name)
+
 if __name__ == '__main__':
-    data = [
-  {
-    "username": "周未111",
-    "first_name": "",
-    "last_name": "",
-    "is_active": 1,
-    "email": "admin1@admin.com",
-    "is_superuser": 0,
-    "is_staff": 0,
-    "last_login": "2016-03-02T00:00:00",
-    "password": "pbkdf2_sha256$24000$AMMxbxy78XBQ$pYabvPMHmmM3sHc/mT0jktXbFTm+ZRdh99a73HQiq1A=",
-    "id": 3,
-    "date_joined": "2016-03-16T17:39:28.942"
-  },
-  {
-    "username": "周未",
-    "first_name": "",
-    "last_name": "",
-    "is_active": 1,
-    "email": "admin@admin.com",
-    "is_superuser": 0,
-    "is_staff": 0,
-    "last_login": "2016-03-17T01:13:48.898",
-    "password": "pbkdf2_sha256$24000$B7SVV3g2DeAc$qbL/Q3Ii+UnzdyO/jecfWf1iM7Nb1PyQU1Itl+j4VJo=",
-    "id": 4,
-    "date_joined": "2016-03-16T17:44:31.509"
-  },
-]
-    option = {'is_active': global_conf.public_status,
-    'is_staff': global_conf.public_status,
-    }
+    pass

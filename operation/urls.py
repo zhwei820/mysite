@@ -10,4 +10,5 @@ urlpatterns = [
     url(r'^banner_shut/(\d+)?$', banner_view.banner_shut),
 
     url(r'^upload_file/', views.upload_file, name='upload_file'),
+    url(r'^test_export/(\d+)?$', views.test_export, name='test_export'),
 ]
