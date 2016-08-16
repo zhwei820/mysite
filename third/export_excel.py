@@ -39,6 +39,8 @@ class ExcelResponse(HttpResponse):
                             tmp_data = [[row.get(col, '') for col in headers[n]] for row in obj]
                             tmp_data.insert(0, headers[n])
                         if hasattr(obj[0], '__getitem__'):
+                            tmp_data = obj
+                            tmp_data.insert(0, headers[n])
                             valid_data = True
                     assert valid_data is True, "ExcelResponse requires a sequence of sequences"
                 else:

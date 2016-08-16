@@ -122,6 +122,20 @@ def prepare_table_data(table_data, option, img_keys=[]):  # prepare table data
         print(traceback.format_exc())
         return ''
 
+def prepare_export_data(table_data, export_keys=[]):  # prepare table data
+    try:
+        res = []
+        for jj in range(0, len(table_data)):
+            tmp = []
+            for key in export_keys:
+                tmp.append(table_data[jj][key])
+            res.append(tmp)
+        return res
+    except Exception as e:
+        print(traceback.format_exc())
+        return ''
+
+
 def get_post_parameter(request, keys):
     try:
         data =  json.loads(str(request.body.decode('utf8')))
