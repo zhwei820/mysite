@@ -8,6 +8,7 @@ Created on 2015-06-09
 '''
 
 
+from django.http import HttpResponse
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 import os
 import datetime
@@ -165,19 +166,15 @@ def upload_file(request, sub_dir):
     return (False, '')   #change
 
 
-def excelview(request, data=None, heders=None):
+def excelview(request, data=None, headers=None, output_name='export'):
     if not data:
-        data = [
-        [{u'姓名': 'Tom', u'年龄': 18, u'性别': u'男', u'身高': 175, u'体重': 67},
-         {u'姓名': 'Lily', u'年龄': 22, u'性别': u'女', u'身高': 163, u'体重': 41}],
-        [{u'姓名': 'Tom', u'身高': 175, u'体重': 67}],
-        [{u'姓名': 'Lily', u'身高': 163, u'体重': 41}]
-        ]
-        headers = [(u'姓名', u'年龄', u'性别', u'身高', u'体重'),
-                   (u'姓名', u'身高', u'体重'),
-                   (u'姓名', u'身高', u'体重')]
-        sheet_name=[u'总览', u'男生统计', u'女生统计']
-    return ExcelResponse(data, output_name=u'班级体检统计', headers=headers, is_template=False, sheet_name=sheet_name)
+        # raise Exception('e')
+        return HttpResponse()
+    data = [data]
+    if headers:
+        headers = [headers]
+    sheet_name=['sheet1']
+    return ExcelResponse(data, output_name=output_name, headers=headers, is_template=False, sheet_name=sheet_name)
 
 if __name__ == '__main__':
     pass

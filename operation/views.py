@@ -24,6 +24,7 @@ import datetime
 import json
 import copy
 from .model.Banner import Banner
+from a_user.model.Menu import Menu
 from config import global_conf
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -43,27 +44,20 @@ def upload_file(request):
         else:
             return JsonResponse({"status": 1, "message":"上传失败"})
 
+
 @login_required
 def test_export(request, param):
     if request.method == 'GET':
-        return utils.excelview(request)
-
         try:
-            # query_filter = {}
-            # query_filter['channel'] = request.GET.get('channel', '')
-            # banners = Banner.get_list(query_filter)
-            # now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            # for v in banners:
-            #     v['_status'] = 1 if str(v['start_time']) < now and str(v['end_time']) > now and v['status'] == 1 else 0
-            # option = {'_status': global_conf.public_status,
-            #           'os_type': global_conf.os_type_option,
-            #           'channel_type': global_conf.channel_type_option,
-            #           'open_type': global_conf.open_type_option,
+            menus = Menu.where().select().execute().all()
+            # option = {'status': global_conf.public_status,
             #           }
-            # banners = utils.prepare_table_data(banners, option, ['pic_url'])
-            # return JsonResponse(banners, safe = False)
-            return utils.excelview(request)
+            # menus = utils.prepare_table_data(menus, option)
+            try:
+                return utils.excelview(request, menus, menus[0].keys(), 'test_export')
+            except Exception as e:
+                print(traceback.format_exc())
+                return JsonResponse({"status": 1, "message":"下载失败"})
         except Exception as e:
-#            logger_error.error(e)
             print(traceback.format_exc())
             return JsonResponse(RESULT_404)

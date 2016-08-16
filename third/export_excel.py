@@ -50,10 +50,10 @@ class ExcelResponse(HttpResponse):
             if len(data) < 65536:
                 book = xlwt.Workbook(encoding=encoding)
                 sheet = book.add_sheet(sheet_name[n] if sheet_name else 'Sheet ' + str(n+1))
-                styles = {'datetime': xlwt.easyxf(num_format_str='yyyy-mm-dd hh:mm:ss'),
-                          'date': xlwt.easyxf(num_format_str='yyyy-mm-dd'),
-                          'time': xlwt.easyxf(num_format_str='hh:mm:ss'),
-                          'default': xlwt.XFStyle}
+                styles = {'datetime': xlwt.easyxf('font: name Times New Roman, height 200, color-index black', num_format_str='yyyy-mm-dd hh:mm:ss'),
+                          'date': xlwt.easyxf('font: name Times New Roman, height 200, color-index black', num_format_str='yyyy-mm-dd'),
+                          'time': xlwt.easyxf('font: name Times New Roman, height 200, color-index black', num_format_str='hh:mm:ss'),
+                          'default': xlwt.easyxf('font: name Times New Roman, height 200, color-index black',)}
                 for rowx, row in enumerate(data):
                     for colx, value in enumerate(row):
                         if isinstance(value, datetime.datetime):
@@ -65,8 +65,6 @@ class ExcelResponse(HttpResponse):
                         else:
                             cell_style = styles['default']
 
-                        cell_style = xlwt.easyxf('font: name Times New Roman, color-index red, bold on',
-                            num_format_str='yyyy-mm-dd hh:mm:ss')
                         sheet.write(rowx, colx, value, style=cell_style)
                 book.save(output)
                 content_type = 'application/vnd.ms-excel'
@@ -85,5 +83,4 @@ class ExcelResponse(HttpResponse):
         output.seek(0)
 
         super(ExcelResponse, self).__init__(content=output.getvalue(), content_type=content_type)
-        self.__setattr__('Content-Disposition', 'attachment;filename=%s.%s' % (output_name.replace('"', '\"'), file_ext))
-        print(dir(self))
+        self['Content-Disposition'] = 'attachment;filename=%s.%s' % ("ddd", file_ext)  # output_name.replace('"', '\"')
