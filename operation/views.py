@@ -49,10 +49,10 @@ def test_export(request, param):
     if request.method == 'GET':
         try:
             messages = UMessage.where().select().execute().all()
-            # option = {'status': global_conf.public_status,
-            #           }
-            # messages = utils.prepare_table_data(messages, option)
-            export_keys = ['id', 'uid', 'info_title', 'info_subtitle', 'content', 'share_msg', 'info_time', 'info_type', 'info_notify', 'status', 'end_time', 'click_url', 'url_images', 'share_url', 'category', 'icon', 'package_name', ]
+            option = {'status': global_conf.public_status,
+                      }
+            messages = utils.prepare_table_data(messages, option)
+            export_keys = ['id', 'uid', 'info_title', 'info_subtitle', 'content', 'share_msg', 'info_time', 'info_type', 'info_notify', '_status', 'end_time', 'click_url', 'url_images', 'share_url', 'category', 'icon', 'package_name', ]
             export_headers = ['id', '用户uid', '标题', '副标题', '内容', '分享文案', '时间', '类型', '是否通知', '状态', '结束时间', '点击链接', '消息图片', '分享类型', '消息标签', 'icon', '报名', ]
             messages = utils.prepare_export_data(messages, export_keys)
             try:

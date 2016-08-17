@@ -19,6 +19,7 @@ import urllib
 import hashlib
 import json
 import copy
+import re
 from datetime import datetime
 from datetime import date
 from config import global_conf
@@ -128,7 +129,7 @@ def prepare_export_data(table_data, export_keys=[]):  # prepare table data
         for jj in range(0, len(table_data)):
             tmp = []
             for key in export_keys:
-                tmp.append(table_data[jj][key])
+                tmp.append(remove_tags(table_data[jj][key]) if (isinstance(table_data[jj][key], str) or isinstance(table_data[jj][key], bytes)) else table_data[jj][key])
             res.append(tmp)
         return res
     except Exception as e:
@@ -179,6 +180,9 @@ def upload_file(request, sub_dir):
         return (True, settings.CDN_URL + sub_dir + file_name) #change
     return (False, '')   #change
 
+def remove_tags(text):
+    TAG_RE = re.compile(r'<[^>]+>')
+    return TAG_RE.sub('', text)
 
 def excelview(request, data=None, headers=None, output_name='export'):
     if not data:

@@ -12,6 +12,8 @@
 
 <script src="{% static 'bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}"></script>
 <script src="{% static 'bootstrap/js/bootstrap-validator.js' %}"></script>
+<script src="{% static 'bootstrap-table/tableExport.js' %}"></script>
+<script src="{% static 'bootstrap-table/bootstrap-table-export.js' %}"></script>
 
 <style>
   .update {
@@ -50,8 +52,8 @@
   </div> -->
 </div>
 
-<table id="table" data-show-refresh="true" data-toolbar=".form-inline" data-sort-name="id" data-sort-order="desc" data-row-style="rowStyle" data-pagination="true" data-page-size="10" data-page-list="[10,20]" data-pagination-first-text="First" data-pagination-pre-text="Previous"
-  data-pagination-next-text="Next" data-pagination-last-text="Last" data-query-params="queryParams">
+<table id="table" data-show-export="true" data-search="true"  data-show-refresh="true"  data-toolbar=".form-inline" data-sort-name="id" data-sort-order="desc" data-row-style="rowStyle" data-pagination="true" data-page-size="10" data-page-list="[10,20]" data-pagination-first-text="First" data-pagination-pre-text="Previous"
+      data-pagination-next-text="Next" data-pagination-last-text="Last" data-query-params="queryParams">
   <thead>
     <tr>
       <th data-field="action" data-align="center" data-formatter="actionFormatter" data-events="actionEvents">操作</th>
@@ -62,7 +64,6 @@
       <th data-sortable="true" data-field="name">名称</th>
       <th data-sortable="true" data-field="_parent_id">父菜单</th>
       <th data-sortable="true" data-field="icon">图标</th>
-
 
     </tr>
   </thead>
